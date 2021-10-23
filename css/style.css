@@ -1,0 +1,87 @@
+/* 
+use grid to create the board */
+html,body {
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    padding-top: 1em;
+    text-align: center;
+    background-color: teal;
+    /* background-image: url('../img/dungeonhell.png'); */
+    background-size: cover;
+    background-repeat: space;
+}
+
+h1, h2 {
+  font-family: 'Press Start 2P', monospace;
+  /* font-family: monospace; */
+  color: blueviolet;
+}
+
+.player {
+    font-family: 'Press Start 2P', monospace;
+    font-size: larger;
+    font-weight: bold;
+  /* font-family: monospace; */
+  color: blueviolet;
+}
+
+canvas {
+  /* background-image: url('../img/stone.png'); */
+  /* background-repeat: repeat; */
+  background-color: whitesmoke;
+  width: 100%;
+  height: 100%;
+}
+
+#container {
+max-width: 50em;
+/* height: 70vh; */
+background-color:violet;
+margin: 0 auto;
+padding: 1em;
+display: grid;
+grid-gap: 1em;
+grid-template-rows: .25fr .5fr .25fr;
+grid-template-columns: .50fr .50fr;
+grid-template-areas: "top-left top-right"
+                      "game game"
+                      "btm-left btm-right";
+}
+
+#top-left, #top-right, #btm-left, #btm-right {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color:whitesmoke;
+}
+
+#top-left {
+  grid-area: top-left;
+}
+
+#top-right {
+  grid-area: top-right;
+  /* background-color: #222; */
+  /* background-image: url('../img/funky-lines.png'); */
+}
+
+main {
+  grid-area: game;
+}
+
+
+#btm-left {
+  grid-area: btm-left;
+  /* background-color: #222; */
+}
+
+#btm-right {
+  grid-area: btm-right;
+  /* background-color: #222; */
+}
+/* use grid to render the    point trackers */
+/* render bow and arrow  */
+/* get targets staged for rendering */
