@@ -6,10 +6,11 @@ const moveDisplay = document.getElementById('movement')
 
 //now w e need to get the game's context so we can dd to it , draw on it, create animations etc
 //we do this with the built in canvas method, get Context
+
 const ctx = game.getContext('2d')
-///////////////////////
-//render bow and arrow
-///////////////////////
+/////////////////////////////////
+//draw bow
+/////////////////////////////////
 const drawCurve = (radius) => {
     ctx.lineWidth = 1
     ctx.beginPath()
@@ -23,7 +24,7 @@ const drawCurve = (radius) => {
 }
 
 const drawArrowLine = (radius) => {
-    ctx.lineWidth = 2
+    ctx.lineWidth = 1
     ctx.beginPath()
     ctx.moveTo((game.width / 2), (game.height - 1))
     ctx.lineTo((game.width / 2), (game.height - (radius * 3.5)))
@@ -61,26 +62,42 @@ const drawBow = (radius) => {
     //left string
     drawLeftString(radius)
 }
+///////////////////////////
+////Draw Arrows
+///////////////////////////
+const drawShaft = (xBase, yBase, xTip, yTip) => {
+    console.log(`drawing shaft from (${xBase}, ${yBase}) to (${xTip}, ${yTip})`)
+    ctx.lineWidth = 1
+    ctx.beginPath()
+    ctx.moveTo(xBase, yBase)
+    ctx.lineTo(xTip, yTip)
+    ctx.strokeStyle = "#652A0E"
+    ctx.stroke()
+    ctx.closePath()
+}
+
+const drawHead = (xTip,yTip) => {
+    console.log("drawing head")
+    ctx.lineWidth = 1
+    ctx.beginPath()
+    //draw a triangle
+    ctx.moveTo(xTip, yTip - 2)
+    ///////////^^^^^^^^^^^^^^//////////////////TRACK THE ABOVE COORDINATE for BULLSEYE
+    ctx.lineTo((xTip + 2), (yTip + 2))
+    ctx.lineTo((xTip - 2), (yTip + 2))
+    ctx.strokeStyle = "black"
+    ctx.stroke()
+    ctx.fillStyle = "black"
+    ctx.fill()
+    ctx.closePath()
+}
+const drawArrow = (xBase, yBase, xTip, yTip) => {
+    drawShaft(xBase, yBase, xTip, yTip)
+    drawHead(xTip,yTip)
+}
 //////////////////
 ///////////////
 ////////////
-const drawShaft = () => {
-
-}
-
-const drawFeathers = () => {
-
-}
-
-const drawHead = () => {
-
-}
-const drawArrow = () => {
-    drawShaft()
-    drawFeathers()
-    drawHead()
-}
-
 
 
 //rules for rendering
@@ -100,7 +117,10 @@ function arrow (x, y, color, width, height) {
 
 window.addEventListener('DOMContentLoaded', (e) => {
     console.log("Hello HTML")
+    //render bow
     drawBow(8)
+    //render arrow
+    drawArrow((game.width / 2), (game.height - 1), (game.width / 2), (game.height - 28))
 })
 
 
