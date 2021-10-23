@@ -96,11 +96,41 @@ const drawArrow = (xBase, yBase, xTip, yTip) => {
     drawHead(xTip,yTip)
 }
 //////////////////
-///////////////
+//Draw Targets
 ////////////
+const drawYellow = (x,y) => {
+    ctx.lineWidth = 5
+    ctx.beginPath()
+    ctx.arc(x,y, 5, 0, Math.PI * 2, true)
+    ctx.strokeStyle = "red"
+    ctx.stroke()
+    ctx.fillStyle = "yellow"
+    ctx.fill()
+    ctx.closePath()
+}
+
+const drawBlue = (x, y) => {
+    ctx.lineWidth = 1
+    ctx.beginPath()
+    ctx.arc(x,y, 15, 0, Math.PI * 2, true)
+    ctx.strokeStyle = "black"
+    ctx.stroke()
+    ctx.fillStyle = "blue"
+    ctx.fill()
+    ctx.closePath()
+}
 
 
-//rules for rendering
+const drawTarget = (x, y) => {
+    drawBlue(x, y)
+    drawYellow(x, y)
+/////^^^^^^^////////////////////////////////////////////Track Yellow for Bullseye!!
+}
+
+
+
+
+//Class for generating new arrows
 function Arrow (xBase, yBase, xTip, yTip) {
     this.xBase = xBase
     this.yBase = yBase
@@ -118,10 +148,9 @@ window.addEventListener('DOMContentLoaded', (e) => {
     //render bow
     drawBow(8)
     //render arrow
-    drawArrow((game.width / 2), (game.height - 1), (game.width / 2), (game.height - 28))
-
-    let pathArrow = new Arrow ((game.width / 2), (game.height - 25), (game.width / 2), (game.height - 52))
-    pathArrow.render()
+    const loadedArrow =  new Arrow((game.width / 2), (game.height - 1), (game.width / 2), (game.height - 28))
+    loadedArrow.render()
+    drawTarget(40, 40)
 })
 
 
