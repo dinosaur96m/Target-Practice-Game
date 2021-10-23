@@ -101,16 +101,14 @@ const drawArrow = (xBase, yBase, xTip, yTip) => {
 
 
 //rules for rendering
-function arrow (x, y, color, width, height) {
-    this.x = x
-    this.y = y 
-    this.color = color
-    this.width = width
-    this.height = height
+function Arrow (xBase, yBase, xTip, yTip) {
+    this.xBase = xBase
+    this.yBase = yBase
+    this.xTip = xTip
+    this.yTip = yTip
     //then declare same type of render method
     this.render = function () {
-        ctx.fillStyle = this.color
-        ctx.fillRect(this.x, this.y, this.width, this.height)
+        drawArrow(xBase, yBase, xTip, yTip)
     }
 }
 
@@ -121,6 +119,9 @@ window.addEventListener('DOMContentLoaded', (e) => {
     drawBow(8)
     //render arrow
     drawArrow((game.width / 2), (game.height - 1), (game.width / 2), (game.height - 28))
+
+    let pathArrow = new Arrow ((game.width / 2), (game.height - 25), (game.width / 2), (game.height - 52))
+    pathArrow.render()
 })
 
 
