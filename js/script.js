@@ -1,4 +1,11 @@
+///////////////////////////////////////////
+//////////Universal Variables/////////////////
+//////////////////////////////////////////
 
+
+///////////////////////////////////////////
+//////////DOM Initializations/////////////////
+//////////////////////////////////////////
 //we need to get our canvas, save it to a varible, so we can access and utilize it 
 const game = document.getElementById('canvas')
 //here we'll get the movement tracker
@@ -8,6 +15,11 @@ const moveDisplay = document.getElementById('movement')
 //we do this with the built in canvas method, get Context
 
 const ctx = game.getContext('2d')
+
+///////////////////////////////////////////
+//////////Functions//////////////////////////
+//////////////////////////////////////////
+
 /////////////////////////////////
 //draw bow
 /////////////////////////////////
@@ -52,6 +64,7 @@ const drawLeftString = (radius) => {
     ctx.closePath()
 }
 
+//call prior functions to put the bow together 
 const drawBow = (radius) => {
     //draw bow curve
     drawCurve(radius)
@@ -91,6 +104,8 @@ const drawHead = (xTip,yTip) => {
     ctx.fill()
     ctx.closePath()
 }
+
+//call prior funcitons to put arrow together
 const drawArrow = (xBase, yBase, xTip, yTip) => {
     drawShaft(xBase, yBase, xTip, yTip)
     drawHead(xTip,yTip)
@@ -120,7 +135,7 @@ const drawBlue = (x, y) => {
     ctx.closePath()
 }
 
-
+//call prior functions to put arrow together 
 const drawTarget = (x, y) => {
     drawBlue(x, y)
     drawYellow(x, y)
@@ -128,7 +143,19 @@ const drawTarget = (x, y) => {
 }
 
 
+///////////////////////////////////////////
+//////////CLASSES//////////////////////////
+//////////////////////////////////////////
 
+//Class for generating new targets
+function Target (x, y) {
+    this.x = x
+    this.y = y
+    //then declare same type of render method
+    this.render = function () {
+        drawTarget(x, y)
+    }
+}
 
 //Class for generating new arrows
 function Arrow (xBase, yBase, xTip, yTip) {
@@ -150,7 +177,8 @@ window.addEventListener('DOMContentLoaded', (e) => {
     //render arrow
     const loadedArrow =  new Arrow((game.width / 2), (game.height - 1), (game.width / 2), (game.height - 28))
     loadedArrow.render()
-    drawTarget(40, 40)
+    const testTarget = new Target(40, 40)
+    testTarget.render()
 })
 
 
