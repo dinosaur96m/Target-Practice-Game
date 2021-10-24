@@ -1,7 +1,3 @@
-///////////////////////////////////////////
-//////////Universal Variables/////////////////
-//////////////////////////////////////////
-
 
 ///////////////////////////////////////////
 //////////DOM Initializations/////////////////
@@ -13,8 +9,15 @@ const moveDisplay = document.getElementById('movement')
 
 //now w e need to get the game's context so we can dd to it , draw on it, create animations etc
 //we do this with the built in canvas method, get Context
-
 const ctx = game.getContext('2d')
+///////////////////////////////////////////
+//////////Universal Variables/////////////////
+//////////////////////////////////////////
+const testTarget = new Target(40, 40)
+const loadedArrowXy= [(game.width / 2), (game.height - 1), (game.width / 2), (game.height - 28)]
+console.log(loadedArrowXy)
+const loadedArrow =  new Arrow(loadedArrowXy[0],loadedArrowXy[1],loadedArrowXy[2], loadedArrowXy[3])
+let firedArrows = []
 
 ///////////////////////////////////////////
 //////////Functions//////////////////////////
@@ -142,7 +145,6 @@ const drawTarget = (x, y) => {
 /////^^^^^^^////////////////////////////////////////////Track Yellow for Bullseye!!
 }
 
-
 ///////////////////////////////////////////
 //////////CLASSES//////////////////////////
 //////////////////////////////////////////
@@ -170,15 +172,86 @@ function Arrow (xBase, yBase, xTip, yTip) {
 }
 
 
+/////////////////////////////////
+////////Movement handler/////////
+////////////////////////////////
+let movementHandler = (e) => {
+    if (e.keyCode === 32) {
+        console.log('space bar released!')
+        firedArrows[`${firedArrows.length}`] = new Arrow(loadedArrowXy[0],loadedArrowXy[1],loadedArrowXy[2], loadedArrowXy[3])
+        console.log(firedArrows.length)
+        let index = firedArrows.length - 1
+        console.log(firedArrows[index].xBase)
+        firedArrows[`${index}`].yBase -= 5
+        firedArrows[`${index}`].yTip -= 5
+        console.log('new arrow coOrds:' + firedArrows[index].xBase + firedArrows[index].yBase + firedArrows[index].xTip + firedArrows[index].yTip)
+        drawArrow(firedArrows[index].xBase, firedArrows[index].yBase, firedArrows[index].xTip, firedArrows[index].yTip)
+    }
+}
+
+//////////Game Loop///////////////
+const gameLoop = () => {
+    //clear the canvas
+    ctx.clearRect(0, 0, game.width, game.height)
+    //display relevant game state(player movement) in our movement display
+    console.log('firedArrow has ' + firedArrows.length + ' objects')
+    //re-draw Target
+    testTarget.render()
+    //re-draw Bow
+    drawBow(8)
+    //render arrows
+    loadedArrow.render()
+    //move fired arrows
+    firedArrows[0].yBase -= 5
+    console.log(`firedArrows[0].yBase is now ${firedArrows[0].yBase}`)
+    firedArrows[0].yTip -= 5
+    console.log(`firedArrows[0].yTip is now ${firedArrows[0].yTip}`)
+    drawArrow(firedArrows[0].xBase, firedArrows[0].yBase, firedArrows[0].xTip, firedArrows[0].yTip)    
+    //render targets
+    testTarget.render()
+}
+
+/////////////////////
+/////Event Listeners
+///////////////////
 window.addEventListener('DOMContentLoaded', (e) => {
     console.log("Hello HTML")
-    //render bow
+    //render initial board
     drawBow(8)
-    //render arrow
-    const loadedArrow =  new Arrow((game.width / 2), (game.height - 1), (game.width / 2), (game.height - 28))
     loadedArrow.render()
-    const testTarget = new Target(40, 40)
     testTarget.render()
+    let gameInterval = setInterval(gameLoop, 70)
+
 })
 
+document.addEventListener('keyup', movementHandler)
 
+
+
+
+
+
+///////TO DO's
+//make arrows fly across the screen  in a straight line
+//make bow roatate on 180 axis
+///////ensure new arrows render correctly according to bow position
+
+//detect a tip-bullseye collision
+//make targets move
+////////ensure tip-bullseye collisions are detected on moving targets!
+
+//increment player 1 points when bullseye detected
+//set a timer to switch player turns after 30 secons
+//highlight the point counter of the player who's up
+//implement a start button for the beginning of each turn
+//set a winning threshold at which poin the game stops
+//display the winning message (+refresh to replya)
+
+/////////^^^^^^^^//////////////////
+/////MVP will be achieved when above steps are complete!////
+/////////////////////////////////////////
+
+//unlisted and simple STRETCH Goals
+//implement a 'Play again' button with the winning message
+//display a timer counting down each players turn
+//display message telling the player their turn is up
