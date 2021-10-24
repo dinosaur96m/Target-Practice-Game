@@ -13,6 +13,11 @@ const ctx = game.getContext('2d')
 ///////////////////////////////////////////
 //////////Universal Variables/////////////////
 //////////////////////////////////////////
+const theBow = new Bow(8, (game.width / 2), (game.height - 16), 
+    (game.width / 2), (game.height - 28), 
+    ((game.width/ 2) + 8), (game.height - (16)),
+    ((game.width / 2) - 8), (game.height - (16))
+)
 const testTarget = new Target(40, 40)
 const loadedArrowXy= [(game.width / 2), (game.height - 1), (game.width / 2), (game.height - 28)]
 console.log(loadedArrowXy)
@@ -26,10 +31,10 @@ let firedArrows = []
 /////////////////////////////////
 //draw bow
 /////////////////////////////////
-const drawCurve = (radius) => {
+const drawCurve = (radius, x, y) => {
     ctx.lineWidth = 1
     ctx.beginPath()
-    ctx.arc((game.width / 2), (game.height - (radius * 2)), radius, 0, Math.PI, true)
+    ctx.arc(x, y, radius, 0, Math.PI, true)
     ctx.strokeStyle = "blueviolet"
     ctx.stroke()
     ctx.fillStyle = "blueviolet"
@@ -38,45 +43,45 @@ const drawCurve = (radius) => {
 
 }
 
-const drawArrowLine = (radius) => {
+const drawArrowLine = (x, y) => {
     ctx.lineWidth = 1
     ctx.beginPath()
     ctx.moveTo((game.width / 2), (game.height - 1))
-    ctx.lineTo((game.width / 2), (game.height - (radius * 3.5)))
+    ctx.lineTo(x, y)
     ctx.strokeStyle = "blueviolet"
     ctx.stroke()
     ctx.closePath()
 }
 
-const drawRightString = (radius) => {
+const drawRightString = (x, y) => {
     ctx.lineWidth = 1
     ctx.beginPath()
     ctx.moveTo((game.width / 2), (game.height - 1))
-    ctx.lineTo(((game.width / 2) + radius ), (game.height - (radius *2)))
+    ctx.lineTo(x, y)
     ctx.strokeStyle = "black"
     ctx.stroke()
     ctx.closePath()
 }
 
-const drawLeftString = (radius) => {
+const drawLeftString = (x, y) => {
     ctx.lineWidth = 1
     ctx.beginPath()
     ctx.moveTo((game.width / 2), (game.height - 1))
-    ctx.lineTo(((game.width / 2) - radius), (game.height - (radius * 2)))
+    ctx.lineTo(x, y)
     ctx.stroke()
     ctx.closePath()
 }
 
 //call prior functions to put the bow together 
-const drawBow = (radius) => {
+const drawBow = (radius, xCenter, yCenter, xTip, yTip, xRight, yRight, xLeft, yLeft) => {
     //draw bow curve
-    drawCurve(radius)
+    drawCurve(radius, xCenter, yCenter)
     //draw arrow line on bow
-    drawArrowLine(radius)
+    drawArrowLine(xTip, yTip)
     //right string
-    drawRightString(radius)
+    drawRightString(xRight, yRight)
     //left string
-    drawLeftString(radius)
+    drawLeftString(xLeft, yLeft)
 }
 ///////////////////////////
 ////Draw Arrows
@@ -164,6 +169,27 @@ const arrowTrafficControl = () => {
 //////////CLASSES//////////////////////////
 //////////////////////////////////////////
 
+//curve: ctx.arc((game.width / 2), (game.height - (radius * 2)), radius, 0, Math.PI, true)
+//arrow line to: ((game.width / 2), (game.height - (radius * 3.5)))
+//right string to: (((game.width / 2) + radius ), (game.height - (radius *2)))
+//left string to: ((game.width / 2) - radius), (game.height - (radius * 2)))
+
+//building the bow
+function Bow (radius, xCenter, yCenter, xTip, yTip, xRight, yRight, xLeft, yLeft) {
+    this.radius = radius
+    this.xCenter = xCenter
+    this.yCenter = yCenter
+    this.xTip = xTip
+    this.yTip = yTip
+    this.xRight = xRight
+    this.yRight = yRight
+    this.xLeft = xLeft
+    this.yLeft = yLeft
+    this.render = function () {
+        drawBow(radius, xCenter, yCenter, xTip, yTip, xRight, yRight, xLeft, yLeft)
+    }
+}
+
 //Class for generating new targets
 function Target (x, y) {
     this.x = x
@@ -190,7 +216,7 @@ function Arrow (xBase, yBase, xTip, yTip) {
 /////////////////////////////////
 ////////Movement handler/////////
 ////////////////////////////////
-let movementHandler = (e) => {
+const spaceBarHandler = (e) => {
     if (e.keyCode === 32) {
         console.log('space bar released!')
         //generate a new arrow with Arrow class
@@ -202,6 +228,35 @@ let movementHandler = (e) => {
         console.log('new arrow coOrds:' + firedArrows[index].xBase + firedArrows[index].yBase + firedArrows[index].xTip + firedArrows[index].yTip)
         drawArrow(firedArrows[index].xBase, firedArrows[index].yBase, firedArrows[index].xTip, firedArrows[index].yTip)
     }
+    }
+
+const leftRightHandler = (e) => {
+    switch (e.keyCode) {
+        case (81):
+            console.log('Q detected!')
+            //move Left
+            theBow.xCenter--
+            theBow.yCenter++
+            theBow.xTip--
+            theBow.yTip++
+            theBow.xRight--
+            theBow.yRight++
+            theBow.xLeft--
+            theBow.yLeft++
+            break
+        case (69):
+            console.log('E detected!')
+            //move Right
+            theBow.xCenter++
+            theBow.yCenter++
+            theBow.xTip++
+            theBow.yTip++
+            theBow.xRight++
+            theBow.yRight++
+            theBow.xLeft++
+            theBow.yLeft++
+            break
+    }
 }
 
 //////////Game Loop///////////////
@@ -211,7 +266,8 @@ const gameLoop = () => {
     //re-draw Target
     testTarget.render()
     //re-draw Bow
-    drawBow(8)
+    drawBow(theBow.radius, theBow.xCenter, theBow.yCenter, theBow.xTip, theBow.yTip, theBow.xRight, theBow.yRight, theBow.xLeft, theBow.yLeft)
+    // theBow.render()
     //render arrows
     loadedArrow.render()             
     //move fired arrows
@@ -226,22 +282,18 @@ const gameLoop = () => {
 window.addEventListener('DOMContentLoaded', (e) => {
     console.log("Hello HTML")
     //render initial board
-    drawBow(8)
+    theBow.render()
     loadedArrow.render()
     testTarget.render()
     let gameInterval = setInterval(gameLoop, 70)
 
 })
 
-document.addEventListener('keyup', movementHandler)
-
-
-
-
+document.addEventListener('keyup', spaceBarHandler)
+document.addEventListener('keydown', leftRightHandler)
 
 
 ///////TO DO's
-//make arrows fly across the screen  in a straight line
 //make bow roatate on 180 axis
 ///////ensure new arrows render correctly according to bow position
 
@@ -254,7 +306,7 @@ document.addEventListener('keyup', movementHandler)
 //highlight the point counter of the player who's up
 //implement a start button for the beginning of each turn
 //set a winning threshold at which poin the game stops
-//display the winning message (+refresh to replya)
+//display the winning message (+refresh to replay)
 
 /////////^^^^^^^^//////////////////
 /////MVP will be achieved when above steps are complete!////
