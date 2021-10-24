@@ -82,7 +82,6 @@ const drawBow = (radius) => {
 ////Draw Arrows
 ///////////////////////////
 const drawShaft = (xBase, yBase, xTip, yTip) => {
-    console.log(`drawing shaft from (${xBase}, ${yBase}) to (${xTip}, ${yTip})`)
     ctx.lineWidth = 1
     ctx.beginPath()
     ctx.moveTo(xBase, yBase)
@@ -93,7 +92,6 @@ const drawShaft = (xBase, yBase, xTip, yTip) => {
 }
 
 const drawHead = (xTip,yTip) => {
-    console.log("drawing head")
     ctx.lineWidth = 1
     ctx.beginPath()
     //draw a triangle
@@ -145,6 +143,23 @@ const drawTarget = (x, y) => {
 /////^^^^^^^////////////////////////////////////////////Track Yellow for Bullseye!!
 }
 
+////////////////////////////////
+///////Track Moving Objects
+///////////////////////////////
+const arrowTrafficControl = () => {
+    for (let i = 0; i < firedArrows.length; i++ ) {
+        if (firedArrows[i].yBase < 0 || firedArrows[i].yBase < 0) {
+        
+        } else {
+            firedArrows[i].yBase -= 5
+            firedArrows[i].yTip -= 5
+            console.log(`drawing arrow from (${firedArrows[i].xBase}, ${firedArrows[i].yBase}) to (${firedArrows[i].xTip}, ${firedArrows[i].yTip})`)
+            drawArrow(firedArrows[i].xBase, firedArrows[i].yBase, firedArrows[i].xTip, firedArrows[i].yTip)   
+        }
+    }
+    }
+    
+
 ///////////////////////////////////////////
 //////////CLASSES//////////////////////////
 //////////////////////////////////////////
@@ -178,10 +193,10 @@ function Arrow (xBase, yBase, xTip, yTip) {
 let movementHandler = (e) => {
     if (e.keyCode === 32) {
         console.log('space bar released!')
+        //generate a new arrow with Arrow class
         firedArrows[`${firedArrows.length}`] = new Arrow(loadedArrowXy[0],loadedArrowXy[1],loadedArrowXy[2], loadedArrowXy[3])
-        console.log(firedArrows.length)
         let index = firedArrows.length - 1
-        console.log(firedArrows[index].xBase)
+        //move the newly fired arrow forward on its journey
         firedArrows[`${index}`].yBase -= 5
         firedArrows[`${index}`].yTip -= 5
         console.log('new arrow coOrds:' + firedArrows[index].xBase + firedArrows[index].yBase + firedArrows[index].xTip + firedArrows[index].yTip)
@@ -193,20 +208,14 @@ let movementHandler = (e) => {
 const gameLoop = () => {
     //clear the canvas
     ctx.clearRect(0, 0, game.width, game.height)
-    //display relevant game state(player movement) in our movement display
-    console.log('firedArrow has ' + firedArrows.length + ' objects')
     //re-draw Target
     testTarget.render()
     //re-draw Bow
     drawBow(8)
     //render arrows
-    loadedArrow.render()
+    loadedArrow.render()             
     //move fired arrows
-    firedArrows[0].yBase -= 5
-    console.log(`firedArrows[0].yBase is now ${firedArrows[0].yBase}`)
-    firedArrows[0].yTip -= 5
-    console.log(`firedArrows[0].yTip is now ${firedArrows[0].yTip}`)
-    drawArrow(firedArrows[0].xBase, firedArrows[0].yBase, firedArrows[0].xTip, firedArrows[0].yTip)    
+    arrowTrafficControl()
     //render targets
     testTarget.render()
 }
