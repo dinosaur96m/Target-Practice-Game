@@ -10,6 +10,11 @@ const moveDisplay = document.getElementById('movement')
 //now w e need to get the game's context so we can dd to it , draw on it, create animations etc
 //we do this with the built in canvas method, get Context
 const ctx = game.getContext('2d')
+/////////////////////////////////
+///////////Re-Scoped Functions/////
+////////////////////////////////
+
+
 ///////////////////////////////////////////
 //////////Universal Variables/////////////////
 //////////////////////////////////////////
@@ -21,27 +26,15 @@ const theBow = new Bow(8, (game.width / 2), (game.height - 16),
 const testTarget = new Target(40, 40)
 const firstArrowXy= [(game.width / 2), (game.height - 1), (game.width / 2), (game.height - 28)]
 console.log(firstArrowXy)
-const loadedArrow =  new Arrow(firstArrowXy[0],firstArrowXy[1],firstArrowXy[2], firstArrowXy[3])
+const loadedArrow =  new Arrow(firstArrowXy[0],firstArrowXy[1], 180)
 let firedArrows = []
 
 
 /////TESTING TESTING TESTING 123////
-const radius1 = 27;
-const angle1  = 225;
+const arrow225 = new Arrow (firstArrowXy[0], firstArrowXy[1], 225)
 
-var x1 = ( radius1 * Math.sin(angle1 *  0.0174532925) ) + 150
-var y1 = radius1 * Math.cos(angle1 * 0.0174532925) + 149
-console.log('angle 1 coors are  x1='+ x1+', y1=' + y1)
-const arrow225 = new Arrow (firstArrowXy[0], firstArrowXy[1], x1, y1)
 
-const radius2 = 27;
-const angle2  = 270;
-
-var x2 = ( radius2 * Math.sin(angle2 *  0.0174532925) ) + 150
-var y2 = radius2 * Math.cos(angle2 * 0.0174532925) + 149
-console.log('angle 2 coors are  x2='+ x2+', y2=' + y2)
-
-const arrow315 = new Arrow (firstArrowXy[0], firstArrowXy[1], x2, y2)
+const arrow270 = new Arrow (firstArrowXy[0], firstArrowXy[1], 270)
 
 ///////////////////////////////////////////
 //////////Functions//////////////////////////
@@ -107,8 +100,21 @@ const drawBow = (radius, xCenter, yCenter, xTip, yTip, xRight, yRight, xLeft, yL
 ///////////////////////////
 ////Draw Arrows
 ///////////////////////////
+    //get the math in a function that can reassaign or return the xTip and yTip for a given arrow
+    const angleToX = (angle) => {
+        const radius = 27;
+        let x = ( radius * Math.sin(angle *  0.0174532925) ) + 150
+        console.log('angleToX: x= ', x)
+        return x
+    }
+    const angleToY = (angle) => {
+        const radius = 27;
+        let y = radius * Math.cos(angle * 0.0174532925) + 149
+        console.log('angleToY: y= ' + y)
+        return y
+    }
 const drawShaft = (xBase, yBase, xTip, yTip) => {
-    ctx.lineWidth = 3
+    ctx.lineWidth = 1
     ctx.beginPath()
     ctx.moveTo(xBase, yBase)
     ctx.lineTo(xTip, yTip)
@@ -138,7 +144,9 @@ const drawHead = (xTip,yTip) => {
 }
 
 //call prior funcitons to put arrow together
-const drawArrow = (xBase, yBase, xTip, yTip) => {
+const drawArrow = (xBase, yBase, angle) => {
+    let xTip = angleToX(angle)
+    let yTip = angleToY(angle)
     drawShaft(xBase, yBase, xTip, yTip)
     // drawHead(xTip,yTip)
 }
@@ -177,6 +185,7 @@ const drawTarget = (x, y) => {
 ////////////////////////////////
 ///////Track Moving Objects
 ///////////////////////////////
+// shift every arrow on the board 5 pixels along its given path
 const arrowTrafficControl = () => {
     for (let i = 0; i < firedArrows.length; i++ ) {
         if (firedArrows[i].yBase < 0 || firedArrows[i].yBase < 0) {
@@ -189,8 +198,6 @@ const arrowTrafficControl = () => {
         }
     }
     }
-    
-const arrowAngleTracker
 ///////////////////////////////////////////
 //////////CLASSES//////////////////////////
 //////////////////////////////////////////
@@ -227,14 +234,13 @@ function Target (x, y) {
 }
 
 //Class for generating new arrows
-function Arrow (xBase, yBase, xTip, yTip) {
+function Arrow (xBase, yBase, angle) {
+    this.angle = angle
     this.xBase = xBase
     this.yBase = yBase
-    this.xTip = xTip
-    this.yTip = yTip
     //then declare same type of render method
     this.render = function () {
-        drawArrow(xBase, yBase, xTip, yTip)
+        drawArrow(xBase, yBase, angle)
     }
 }
 
@@ -261,12 +267,20 @@ const leftRightHandler = (e) => {
         case (81):
             console.log('Q detected!')
             //move Left
-            loadedArrow.xTip 
+            loadedArrowAngle++
+            angleToCoords(loadedArrowAngle)
+            if (loadedArrowAngle === 270 || loadedArrowAngle === 90 ) {
+                loadedArrowAngle = loadedArrowAngle
+            } 
             break
         case (69):
             console.log('E detected!')
             //move Right
-            loadedArrow.yTip
+            loadedArrowAngle--
+            angleToCoords(loadedArrowAngle)
+            if (loadedArrowAngle === 270 || loadedArrowAngle === 90 ) {
+                loadedArrowAngle = loadedArrowAngle
+            } 
             break
     }
 }
@@ -284,6 +298,7 @@ const gameLoop = () => {
     // theBow.render()
     //render arrows
     loadedArrow.render()
+    //test arrows
     arrow225.render()
     arrow315.render()           
     //move fired arrows
@@ -306,7 +321,7 @@ window.addEventListener('DOMContentLoaded', (e) => {
     theBow.render()
     loadedArrow.render()
     testTarget.render()
-    // let gameInterval = setInterval(gameLoop, 70)
+    let gameInterval = setInterval(gameLoop, 70)
 
 
     ////////TEST ANGULAR MATH/////
@@ -346,7 +361,10 @@ document.addEventListener('keydown', leftRightHandler)
 
 ///////TO DO's
 //make bow roatate on 180 axis
+    //get the math in a function that can reassaign or return the xTip and yTip for loaded arrow
 ///////ensure new arrows render correctly according to bow position
+    //incoproate angle into the Arrow class so new arrows can folow the path (or they get it from the
+    //current state of loaded Arrow)
 
 //detect a tip-bullseye collision
 //make targets move
