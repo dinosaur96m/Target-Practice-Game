@@ -19,10 +19,29 @@ const theBow = new Bow(8, (game.width / 2), (game.height - 16),
     ((game.width / 2) - 8), (game.height - (16))
 )
 const testTarget = new Target(40, 40)
-const loadedArrowXy= [(game.width / 2), (game.height - 1), (game.width / 2), (game.height - 28)]
-console.log(loadedArrowXy)
-const loadedArrow =  new Arrow(loadedArrowXy[0],loadedArrowXy[1],loadedArrowXy[2], loadedArrowXy[3])
+const firstArrowXy= [(game.width / 2), (game.height - 1), (game.width / 2), (game.height - 28)]
+console.log(firstArrowXy)
+const loadedArrow =  new Arrow(firstArrowXy[0],firstArrowXy[1],firstArrowXy[2], firstArrowXy[3])
 let firedArrows = []
+
+
+/////TESTING TESTING TESTING 123////
+const radius1 = 27;
+const angle1  = 225;
+
+var x1 = ( radius1 * Math.sin(angle1 *  0.0174532925) ) + 150
+var y1 = radius1 * Math.cos(angle1 * 0.0174532925) + 149
+console.log('angle 1 coors are  x1='+ x1+', y1=' + y1)
+const arrow225 = new Arrow (firstArrowXy[0], firstArrowXy[1], x1, y1)
+
+const radius2 = 27;
+const angle2  = 270;
+
+var x2 = ( radius2 * Math.sin(angle2 *  0.0174532925) ) + 150
+var y2 = radius2 * Math.cos(angle2 * 0.0174532925) + 149
+console.log('angle 2 coors are  x2='+ x2+', y2=' + y2)
+
+const arrow315 = new Arrow (firstArrowXy[0], firstArrowXy[1], x2, y2)
 
 ///////////////////////////////////////////
 //////////Functions//////////////////////////
@@ -74,6 +93,8 @@ const drawLeftString = (x, y) => {
 
 //call prior functions to put the bow together 
 const drawBow = (radius, xCenter, yCenter, xTip, yTip, xRight, yRight, xLeft, yLeft) => {
+    console.log(`xTip = ${xTip}\n yTip = ${yTip}\n xCenter = ${xCenter}\n yCenter = ${yCenter}`)
+    console.log(`Bottom x = ${game.width / 2}\n Bottom y = ${game.height - 1}`)
     //draw bow curve
     drawCurve(radius, xCenter, yCenter)
     //draw arrow line on bow
@@ -87,13 +108,18 @@ const drawBow = (radius, xCenter, yCenter, xTip, yTip, xRight, yRight, xLeft, yL
 ////Draw Arrows
 ///////////////////////////
 const drawShaft = (xBase, yBase, xTip, yTip) => {
-    ctx.lineWidth = 1
+    ctx.lineWidth = 3
     ctx.beginPath()
     ctx.moveTo(xBase, yBase)
     ctx.lineTo(xTip, yTip)
-    ctx.strokeStyle = "#652A0E"
+    ctx.strokeStyle = "black"
+    // "#652A0E"
     ctx.stroke()
     ctx.closePath()
+    console.log('drawing shaft!! xBase: ', xBase)
+    console.log('drawing shaft!! yBase: ', yBase)
+    console.log('drawing shaft!! xTip: ', xTip)
+    console.log('drawing shaft!! yTip: ', yTip)
 }
 
 const drawHead = (xTip,yTip) => {
@@ -114,7 +140,7 @@ const drawHead = (xTip,yTip) => {
 //call prior funcitons to put arrow together
 const drawArrow = (xBase, yBase, xTip, yTip) => {
     drawShaft(xBase, yBase, xTip, yTip)
-    drawHead(xTip,yTip)
+    // drawHead(xTip,yTip)
 }
 //////////////////
 //Draw Targets
@@ -164,7 +190,7 @@ const arrowTrafficControl = () => {
     }
     }
     
-
+const arrowAngleTracker
 ///////////////////////////////////////////
 //////////CLASSES//////////////////////////
 //////////////////////////////////////////
@@ -220,7 +246,7 @@ const spaceBarHandler = (e) => {
     if (e.keyCode === 32) {
         console.log('space bar released!')
         //generate a new arrow with Arrow class
-        firedArrows[`${firedArrows.length}`] = new Arrow(loadedArrowXy[0],loadedArrowXy[1],loadedArrowXy[2], loadedArrowXy[3])
+        firedArrows[`${firedArrows.length}`] = new Arrow(firstArrowXy[0],firstArrowXy[1],firstArrowXy[2], firstArrowXy[3])
         let index = firedArrows.length - 1
         //move the newly fired arrow forward on its journey
         firedArrows[`${index}`].yBase -= 5
@@ -235,31 +261,19 @@ const leftRightHandler = (e) => {
         case (81):
             console.log('Q detected!')
             //move Left
-            theBow.xCenter--
-            theBow.yCenter++
-            theBow.xTip--
-            theBow.yTip++
-            theBow.xRight--
-            theBow.yRight++
-            theBow.xLeft--
-            theBow.yLeft++
+            loadedArrow.xTip 
             break
         case (69):
             console.log('E detected!')
             //move Right
-            theBow.xCenter++
-            theBow.yCenter++
-            theBow.xTip++
-            theBow.yTip++
-            theBow.xRight++
-            theBow.yRight++
-            theBow.xLeft++
-            theBow.yLeft++
+            loadedArrow.yTip
             break
     }
 }
 
-//////////Game Loop///////////////
+////////////////////////
+//////////Game Loop
+///////////////////////
 const gameLoop = () => {
     //clear the canvas
     ctx.clearRect(0, 0, game.width, game.height)
@@ -269,7 +283,9 @@ const gameLoop = () => {
     drawBow(theBow.radius, theBow.xCenter, theBow.yCenter, theBow.xTip, theBow.yTip, theBow.xRight, theBow.yRight, theBow.xLeft, theBow.yLeft)
     // theBow.render()
     //render arrows
-    loadedArrow.render()             
+    loadedArrow.render()
+    arrow225.render()
+    arrow315.render()           
     //move fired arrows
     arrowTrafficControl()
     //render targets
@@ -281,12 +297,47 @@ const gameLoop = () => {
 ///////////////////
 window.addEventListener('DOMContentLoaded', (e) => {
     console.log("Hello HTML")
+    //test angles on drawings
+    
+    ///tenst
+    arrow225.render()
+    arrow315.render()
     //render initial board
     theBow.render()
     loadedArrow.render()
     testTarget.render()
-    let gameInterval = setInterval(gameLoop, 70)
+    // let gameInterval = setInterval(gameLoop, 70)
 
+
+    ////////TEST ANGULAR MATH/////
+    // let angle = 91
+    // let radian = angle * 0.0174532925
+    // let x1 = 27 *  Math.cos(radian)
+    // let y1 = 27 *  Math.sin(radian)
+    // console.log(`for ${angle} degree angle, x is at ${x1} and y is ${y1}`)
+
+    // let radian2 = (angle + 1) * 0.0174532925
+    // let x2 = 27 *  Math.cos(radian2)
+    // let y2 = 27 * Math.sin(radian2)
+    // console.log(`for ${angle + 1} degree angle, x is at ${x2} and y is ${y2}`)
+
+    // console.log(`x2 - x1 = ${x2 - 1} and y2 -y1 = ${y2 - y1}`)
+
+// const radius1 = 27;
+// const angle1  = 181;
+// var x1 = radius1 * Math.sin(angle1 *  0.0174532925)
+// var y1 = radius1 * Math.cos(angle1 * 0.0174532925)
+// console.log('angle 1 coors are  x1='+ 
+// x1+', y1=' + y1)
+
+// const radius2 = 27;
+// const angle2  = 182;
+// const x2 = radius2 * Math.sin(angle2 * 0.0174532925);
+// const y2 = radius2 * Math.cos(angle2 * 0.0174532925);
+// console.log('angle 2 coors are  x2='+ 
+// x2+', y2=' + y2)
+
+// console.log(`x2 - x1 = ${x2 - 1} and y2 -y1 = ${y2 - y1}`)
 })
 
 document.addEventListener('keyup', spaceBarHandler)
