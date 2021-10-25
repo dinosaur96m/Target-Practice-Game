@@ -122,10 +122,6 @@ const drawShaft = (xBase, yBase, xTip, yTip) => {
     // "#652A0E"
     ctx.stroke()
     ctx.closePath()
-    console.log('drawing shaft!! xBase: ', xBase)
-    console.log('drawing shaft!! yBase: ', yBase)
-    console.log('drawing shaft!! xTip: ', xTip)
-    console.log('drawing shaft!! yTip: ', yTip)
 }
 
 const drawHead = (xTip,yTip) => {
@@ -267,21 +263,25 @@ const leftRightHandler = (e) => {
         case (81):
             console.log('Q detected!')
             //move Left
-            loadedArrow.angle++
+            loadedArrow.angle+= 5
             loadedArrow.xTip = angleToX(loadedArrow.angle)
             loadedArrow.yTip = angleToY(loadedArrow.angle)
-            if (loadedArrow.angle === 270 || loadedArrow.angle === 90 ) {
-                loadedArrow.angle = loadedArrow.angle
-            } 
+            if (loadedArrow.angle >= 270) {
+                loadedArrow.angle = 270
+                loadedArrow.xTip = angleToX(270)
+                loadedArrow.yTip = angleToY(270)
+            }
             break
         case (69):
             console.log('E detected!')
             //move Right
-            loadedArrow.angle--
+            loadedArrow.angle-= 5
             loadedArrow.xTip = angleToX(loadedArrow.angle)
             loadedArrow.yTip = angleToY(loadedArrow.angle)
-            if (loadedArrow.angle === 270 || loadedArrow.angle === 90 ) {
-                loadedArrow.angle = loadedArrow.angle
+            if (loadedArrow.angle <= 90 ) {
+                loadedArrow.angle = 90
+                loadedArrow.xTip = angleToX(90)
+                loadedArrow.yTip = angleToY(90)
             } 
             break
     }
@@ -360,8 +360,6 @@ document.addEventListener('keydown', leftRightHandler)
 
 
 ///////TO DO's
-//make bow roatate on 180 axis
-    //get the math in a function that can reassaign or return the xTip and yTip for loaded arrow
 ///////ensure new arrows render correctly according to bow position
     //incoproate angle into the Arrow class so new arrows can folow the path (or they get it from the
     //current state of loaded Arrow)
