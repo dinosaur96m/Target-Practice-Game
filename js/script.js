@@ -14,6 +14,19 @@ const ctx = game.getContext('2d')
 ///////////Re-Scoped Functions/////
 ////////////////////////////////
 
+//get the math in a function that can reassaign or return the xTip and yTip for a given arrow
+const angleToX = (angle) => {
+    const radius = 27;
+    let x = ( radius * Math.sin(angle *  0.0174532925) ) + 150
+    console.log('angleToX: x= ', x)
+    return x
+}
+const angleToY = (angle) => {
+    const radius = 27;
+    let y = radius * Math.cos(angle * 0.0174532925) + 149
+    console.log('angleToY: y= ' + y)
+    return y
+}
 
 ///////////////////////////////////////////
 //////////Universal Variables/////////////////
@@ -23,18 +36,17 @@ const theBow = new Bow(8, (game.width / 2), (game.height - 16),
     ((game.width/ 2) + 8), (game.height - (16)),
     ((game.width / 2) - 8), (game.height - (16))
 )
-const testTarget = new Target(40, 40)
 const firstArrowXy= [(game.width / 2), (game.height - 1), (game.width / 2), (game.height - 28)]
 console.log(firstArrowXy)
-const loadedArrow =  new Arrow(firstArrowXy[0],firstArrowXy[1], 180)
+let loadedArrow =  new Arrow(firstArrowXy[0],firstArrowXy[1], 180)
+let arrow225 = new Arrow (firstArrowXy[0], firstArrowXy[1], 225)
+let arrow270 = new Arrow (firstArrowXy[0], firstArrowXy[1], 270)
+let testTarget = new Target(40, 40)
 let firedArrows = []
 
 
 /////TESTING TESTING TESTING 123////
-const arrow225 = new Arrow (firstArrowXy[0], firstArrowXy[1], 225)
 
-
-const arrow270 = new Arrow (firstArrowXy[0], firstArrowXy[1], 270)
 
 ///////////////////////////////////////////
 //////////Functions//////////////////////////
@@ -100,19 +112,7 @@ const drawBow = (radius, xCenter, yCenter, xTip, yTip, xRight, yRight, xLeft, yL
 ///////////////////////////
 ////Draw Arrows
 ///////////////////////////
-    //get the math in a function that can reassaign or return the xTip and yTip for a given arrow
-    const angleToX = (angle) => {
-        const radius = 27;
-        let x = ( radius * Math.sin(angle *  0.0174532925) ) + 150
-        console.log('angleToX: x= ', x)
-        return x
-    }
-    const angleToY = (angle) => {
-        const radius = 27;
-        let y = radius * Math.cos(angle * 0.0174532925) + 149
-        console.log('angleToY: y= ' + y)
-        return y
-    }
+
 const drawShaft = (xBase, yBase, xTip, yTip) => {
     ctx.lineWidth = 1
     ctx.beginPath()
@@ -144,9 +144,7 @@ const drawHead = (xTip,yTip) => {
 }
 
 //call prior funcitons to put arrow together
-const drawArrow = (xBase, yBase, angle) => {
-    let xTip = angleToX(angle)
-    let yTip = angleToY(angle)
+const drawArrow = (xBase, yBase, xTip, yTip) => {
     drawShaft(xBase, yBase, xTip, yTip)
     // drawHead(xTip,yTip)
 }
@@ -238,9 +236,11 @@ function Arrow (xBase, yBase, angle) {
     this.angle = angle
     this.xBase = xBase
     this.yBase = yBase
+    this.xTip = angleToX(angle)
+    this.yTip = angleToY(angle)
     //then declare same type of render method
     this.render = function () {
-        drawArrow(xBase, yBase, angle)
+        drawArrow(this.xBase, this.yBase, this.xTip, this.yTip)
     }
 }
 
@@ -267,19 +267,21 @@ const leftRightHandler = (e) => {
         case (81):
             console.log('Q detected!')
             //move Left
-            loadedArrowAngle++
-            angleToCoords(loadedArrowAngle)
-            if (loadedArrowAngle === 270 || loadedArrowAngle === 90 ) {
-                loadedArrowAngle = loadedArrowAngle
+            loadedArrow.angle++
+            loadedArrow.xTip = angleToX(loadedArrow.angle)
+            loadedArrow.yTip = angleToY(loadedArrow.angle)
+            if (loadedArrow.angle === 270 || loadedArrow.angle === 90 ) {
+                loadedArrow.angle = loadedArrow.angle
             } 
             break
         case (69):
             console.log('E detected!')
             //move Right
-            loadedArrowAngle--
-            angleToCoords(loadedArrowAngle)
-            if (loadedArrowAngle === 270 || loadedArrowAngle === 90 ) {
-                loadedArrowAngle = loadedArrowAngle
+            loadedArrow.angle--
+            loadedArrow.xTip = angleToX(loadedArrow.angle)
+            loadedArrow.yTip = angleToY(loadedArrow.angle)
+            if (loadedArrow.angle === 270 || loadedArrow.angle === 90 ) {
+                loadedArrow.angle = loadedArrow.angle
             } 
             break
     }
@@ -297,10 +299,10 @@ const gameLoop = () => {
     drawBow(theBow.radius, theBow.xCenter, theBow.yCenter, theBow.xTip, theBow.yTip, theBow.xRight, theBow.yRight, theBow.xLeft, theBow.yLeft)
     // theBow.render()
     //render arrows
-    loadedArrow.render()
+    drawArrow(loadedArrow.xBase, loadedArrow.yBase, loadedArrow.xTip, loadedArrow.yTip)
     //test arrows
-    arrow225.render()
-    arrow315.render()           
+    // arrow225.render()
+    // arrow270.render()           
     //move fired arrows
     arrowTrafficControl()
     //render targets
@@ -312,14 +314,12 @@ const gameLoop = () => {
 ///////////////////
 window.addEventListener('DOMContentLoaded', (e) => {
     console.log("Hello HTML")
-    //test angles on drawings
-    
-    ///tenst
-    arrow225.render()
-    arrow315.render()
-    //render initial board
-    theBow.render()
+    //create and render arrows
     loadedArrow.render()
+    // arrow225.render()
+    // arrow270.render()
+    //load other objs
+    theBow.render()
     testTarget.render()
     let gameInterval = setInterval(gameLoop, 70)
 
