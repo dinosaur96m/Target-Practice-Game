@@ -322,13 +322,21 @@ const freshScreen = () => {
     //re-draw Bow
     ctx.drawImage(bowPic, (150 - (loadedArrow.radius / 2 + 20)), (game.height - 35), (loadedArrow.radius * 2.5), (loadedArrow.radius * 2.5))
     //render loaded arrow
-    drawArrow(firstArrowXy[0], firstArrowXy[1], firstArrowXy[2], firstArrowXy[3])  
+    drawArrow(firstArrowXy[0], firstArrowXy[1], firstArrowXy[2], firstArrowXy[3]) 
+    //bring back button
+    buttonSub.style.display = "none" 
+    startButton.style.display = "block"
 }
 const checkForWinner = (player) => {
-    if (player.points >= 10) {
+    if (player.points >= 15) {
         player.isWinner = true
         clearInterval(gameInterval)
         console.log(player.name + "is the winner!")
+        freshScreen()
+        startButton.style.display = "none"
+        buttonSub.innerText = `${player.name} is the winner!`
+        buttonSub.style.display = "block"
+        p1pointsDisplay.innerText = "Refresh to play again!"
     }
 }
 const bullsEyeDetector = () => {
@@ -424,6 +432,8 @@ startButton.addEventListener('click', (e) => {
         targets[i].render()
     }
     startButton.disabled = true
+    startButton.style.display = "none"
+    buttonSub.style.display = "block"
 })
 
 
