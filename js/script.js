@@ -14,6 +14,8 @@ const ctx = game.getContext('2d')
 const bowPic = new Image(27, 27);
 const p1pointsDisplay = document.getElementById("p1points")
 const p2pointsDisplay = document.getElementById("p2points")
+const p1Box = document.getElementById("p1-btm-left")
+const p2Box = document.getElementById("p2-btm-right")
 bowPic.src = "css/arhcers_bow.png"
 ////////////////////////////////////////
 ///////////Functions needed before/////////
@@ -327,6 +329,21 @@ const bullsEyeDetector = () => {
         }
     }
 }
+
+const switchTurns = () => {
+    if (playerOne.isUp === true) {
+        p1Box.style.backgroundColor = "whitesmoke"
+        p2Box.style.backgroundColor = "#00DCDC"
+        playerOne.isUp = false
+        console.log("player 2 is up now!")
+    } else if (playerOne.isUp === false) {
+        p1Box.style.backgroundColor = "#00DCDC"
+        p2Box.style.backgroundColor = "whitesmoke"
+        playerOne.isUp = true
+        console.log("player 1's Turn now!")
+    }
+}
+
 const gameLoop = () => {
     //clear the canvas
     ctx.clearRect(0, 0, game.width, game.height)
@@ -364,6 +381,7 @@ window.addEventListener('DOMContentLoaded', (e) => {
             targets[i].render()
         }
     gameInterval = setInterval(gameLoop, 70)
+    turnInterval = setInterval(switchTurns, 30000)
 })
 
 document.addEventListener('keyup', spaceBarHandler)
@@ -375,12 +393,7 @@ bowPic.addEventListener('load', e => {
 
 ///////TO DO's
 
-//detect a tip-bullseye collision
-////////ensure tip-bullseye collisions are detected on moving targets!
-////////make the arrow stop and fall with the target for the rest of the turn(fallback on making it disappear!)
-
-//increment player 1 points when bullseye detected
-//set a timer to switch player turns after 30 secons
+//set a timer to switch player turns after 30 seconds
 //highlight the point counter of the player who's up
 
 //implement a start button for the beginning of each turn
