@@ -10,19 +10,19 @@ const moveDisplay = document.getElementById('movement')
 //now w e need to get the game's context so we can dd to it , draw on it, create animations etc
 //we do this with the built in canvas method, get Context
 const ctx = game.getContext('2d')
-/////////////////////////////////
-///////////Re-Scoped Functions/////
-////////////////////////////////
+////////////////////////////////////////
+///////////Functions needed before/////////
+///////////declaring universal variables/////
+/////////////////////////////////////////
 
 //get the math in a function that can reassaign or return the xTip and yTip for a given arrow
-const angleToX = (angle) => {
-    const radius = 27;
+const angleToX = (angle, radius) => {
     let x = ( radius * Math.sin(angle *  0.0174532925) ) + 150
     console.log('angleToX: x= ', x)
     return x
 }
-const angleToY = (angle) => {
-    const radius = 27;
+const angleToY = (angle, radius) => {
+    radius
     let y = radius * Math.cos(angle * 0.0174532925) + 149
     console.log('angleToY: y= ' + y)
     return y
@@ -180,18 +180,29 @@ const drawTarget = (x, y) => {
 ///////Track Moving Objects
 ///////////////////////////////
 // shift every arrow on the board 5 pixels along its given path
+const arrowThruster = (arrow) => {
+arrow.radius += 5
+arrow.xTip = angleToX(arrow.angle, arrow.radius)
+arrow.yTip = angleToY(arrow.angle, arrow.radius)
+arrow.xBase = angleToX(arrow.angle, (arrow.radius - 27))
+arrow.yBase = angleToY(arrow.angle, arrow.radius -27)
+console.log('new arrow coOrds:' + arrow.xBase + arrow.yBase + arrow.xTip + arrow.yTip)
+arrow.render()
+}
+
+
+
 const arrowTrafficControl = () => {
     for (let i = 0; i < firedArrows.length; i++ ) {
         if (firedArrows[i].yBase < 0 || firedArrows[i].yBase < 0) {
         
         } else {
-            firedArrows[i].yBase -= 5
-            firedArrows[i].yTip -= 5
-            console.log(`drawing arrow from (${firedArrows[i].xBase}, ${firedArrows[i].yBase}) to (${firedArrows[i].xTip}, ${firedArrows[i].yTip})`)
-            drawArrow(firedArrows[i].xBase, firedArrows[i].yBase, firedArrows[i].xTip, firedArrows[i].yTip)   
+            arrowThruster(firedArrows[i])
         }
     }
     }
+
+
 ///////////////////////////////////////////
 //////////CLASSES//////////////////////////
 //////////////////////////////////////////
@@ -229,11 +240,12 @@ function Target (x, y) {
 
 //Class for generating new arrows
 function Arrow (xBase, yBase, angle) {
-    this.angle = angle
     this.xBase = xBase
     this.yBase = yBase
-    this.xTip = angleToX(angle)
-    this.yTip = angleToY(angle)
+    this.xTip = angleToX(angle, 27)
+    this.yTip = angleToY(angle, 27)
+    this.angle = angle
+    this.radius = 27
     //then declare same type of render method
     this.render = function () {
         drawArrow(this.xBase, this.yBase, this.xTip, this.yTip)
@@ -248,14 +260,11 @@ const spaceBarHandler = (e) => {
     if (e.keyCode === 32) {
         console.log('space bar released!')
         //generate a new arrow with Arrow class
-        firedArrows[`${firedArrows.length}`] = new Arrow(firstArrowXy[0],firstArrowXy[1],firstArrowXy[2], firstArrowXy[3])
+        firedArrows[`${firedArrows.length}`] = new Arrow(firstArrowXy[0],firstArrowXy[1], loadedArrow.angle)
         let index = firedArrows.length - 1
         //move the newly fired arrow forward on its journey
-        firedArrows[`${index}`].yBase -= 5
-        firedArrows[`${index}`].yTip -= 5
-        console.log('new arrow coOrds:' + firedArrows[index].xBase + firedArrows[index].yBase + firedArrows[index].xTip + firedArrows[index].yTip)
-        drawArrow(firedArrows[index].xBase, firedArrows[index].yBase, firedArrows[index].xTip, firedArrows[index].yTip)
-    }
+        arrowThruster(firedArrows[index])
+        }
     }
 
 const leftRightHandler = (e) => {
@@ -264,24 +273,24 @@ const leftRightHandler = (e) => {
             console.log('Q detected!')
             //move Left
             loadedArrow.angle+= 5
-            loadedArrow.xTip = angleToX(loadedArrow.angle)
-            loadedArrow.yTip = angleToY(loadedArrow.angle)
+            loadedArrow.xTip = angleToX(loadedArrow.angle, loadedArrow.radius)
+            loadedArrow.yTip = angleToY(loadedArrow.angle, loadedArrow.radius)
             if (loadedArrow.angle >= 270) {
                 loadedArrow.angle = 270
-                loadedArrow.xTip = angleToX(270)
-                loadedArrow.yTip = angleToY(270)
+                loadedArrow.xTip = angleToX(270, loadedArrow.radius)
+                loadedArrow.yTip = angleToY(270, loadedArrow.radius)
             }
             break
         case (69):
             console.log('E detected!')
             //move Right
             loadedArrow.angle-= 5
-            loadedArrow.xTip = angleToX(loadedArrow.angle)
-            loadedArrow.yTip = angleToY(loadedArrow.angle)
+            loadedArrow.xTip = angleToX(loadedArrow.angle, loadedArrow.radius)
+            loadedArrow.yTip = angleToY(loadedArrow.angle, loadedArrow.radius)
             if (loadedArrow.angle <= 90 ) {
                 loadedArrow.angle = 90
-                loadedArrow.xTip = angleToX(90)
-                loadedArrow.yTip = angleToY(90)
+                loadedArrow.xTip = angleToX(90, loadedArrow.radius)
+                loadedArrow.yTip = angleToY(90, loadedArrow.radius)
             } 
             break
     }
@@ -322,42 +331,10 @@ window.addEventListener('DOMContentLoaded', (e) => {
     theBow.render()
     testTarget.render()
     let gameInterval = setInterval(gameLoop, 70)
-
-
-    ////////TEST ANGULAR MATH/////
-    // let angle = 91
-    // let radian = angle * 0.0174532925
-    // let x1 = 27 *  Math.cos(radian)
-    // let y1 = 27 *  Math.sin(radian)
-    // console.log(`for ${angle} degree angle, x is at ${x1} and y is ${y1}`)
-
-    // let radian2 = (angle + 1) * 0.0174532925
-    // let x2 = 27 *  Math.cos(radian2)
-    // let y2 = 27 * Math.sin(radian2)
-    // console.log(`for ${angle + 1} degree angle, x is at ${x2} and y is ${y2}`)
-
-    // console.log(`x2 - x1 = ${x2 - 1} and y2 -y1 = ${y2 - y1}`)
-
-// const radius1 = 27;
-// const angle1  = 181;
-// var x1 = radius1 * Math.sin(angle1 *  0.0174532925)
-// var y1 = radius1 * Math.cos(angle1 * 0.0174532925)
-// console.log('angle 1 coors are  x1='+ 
-// x1+', y1=' + y1)
-
-// const radius2 = 27;
-// const angle2  = 182;
-// const x2 = radius2 * Math.sin(angle2 * 0.0174532925);
-// const y2 = radius2 * Math.cos(angle2 * 0.0174532925);
-// console.log('angle 2 coors are  x2='+ 
-// x2+', y2=' + y2)
-
-// console.log(`x2 - x1 = ${x2 - 1} and y2 -y1 = ${y2 - y1}`)
 })
 
 document.addEventListener('keyup', spaceBarHandler)
 document.addEventListener('keydown', leftRightHandler)
-
 
 ///////TO DO's
 ///////ensure new arrows render correctly according to bow position
