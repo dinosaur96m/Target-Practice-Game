@@ -13,8 +13,6 @@ const ctx = game.getContext('2d')
 //add bow image
 const bowPic = new Image(27, 27);
 bowPic.src = "css/arhcers_bow.png"
-document.querySelector('body').appendChild(bowPic)
-
 ////////////////////////////////////////
 ///////////Functions needed before/////////
 ///////////declaring universal variables/////
@@ -44,10 +42,8 @@ const theBow = new Bow(8, (game.width / 2), (game.height - 16),
 const firstArrowXy= [(game.width / 2), (game.height - 1), (game.width / 2), (game.height - 28)]
 console.log(firstArrowXy)
 let loadedArrow =  new Arrow(firstArrowXy[0],firstArrowXy[1], 180)
-let arrow225 = new Arrow (firstArrowXy[0], firstArrowXy[1], 225)
-let arrow270 = new Arrow (firstArrowXy[0], firstArrowXy[1], 270)
-let testTarget = new Target(40, 40)
 let firedArrows = []
+let targets = [new Target(40, -15), new Target(110, -30), new Target(210, -60), new Target(260, -90)]
 
 
 /////TESTING TESTING TESTING 123////
@@ -167,8 +163,6 @@ console.log('new arrow coOrds:' + arrow.xBase + arrow.yBase + arrow.xTip + arrow
 arrow.render()
 }
 
-
-
 const arrowTrafficControl = () => {
     for (let i = 0; i < firedArrows.length; i++ ) {
         if (firedArrows[i].yBase < 0 || firedArrows[i].yBase < 0) {
@@ -179,6 +173,14 @@ const arrowTrafficControl = () => {
     }
     }
 
+const targetPusher = () => {
+    for (let i = 0; i < targets.length; i++)
+    if ((targets[i].y - 15) > game.height) {
+        targets[i].y = -16
+    } else {
+        targets[i].y++
+    }
+}
 
 ///////////////////////////////////////////
 //////////CLASSES//////////////////////////
@@ -206,7 +208,7 @@ function Target (x, y) {
     this.y = y
     //then declare same type of render method
     this.render = function () {
-        drawTarget(x, y)
+        drawTarget(this.x, this.y)
     }
 }
 
@@ -274,21 +276,20 @@ const leftRightHandler = (e) => {
 const gameLoop = () => {
     //clear the canvas
     ctx.clearRect(0, 0, game.width, game.height)
-    //re-draw Target
-    testTarget.render()
     //re-draw Bow
     drawBow(theBow.radius, theBow.xCenter, theBow.yCenter, theBow.xTip, theBow.yTip, theBow.xRight, theBow.yRight, theBow.xLeft, theBow.yLeft)
     ctx.drawImage(bowPic, (150 - (loadedArrow.radius / 2 + 20)), (game.height - 35), (loadedArrow.radius * 2.5), (loadedArrow.radius * 2.5))
     // theBow.render()
+    //render targets
+    targetPusher()
+    for (let i = 0; i < targets.length; i++)
+    {
+        targets[i].render()
+    }
     //render arrows
-    drawArrow(loadedArrow.xBase, loadedArrow.yBase, loadedArrow.xTip, loadedArrow.yTip)
-    //test arrows
-    // arrow225.render()
-    // arrow270.render()           
+    drawArrow(loadedArrow.xBase, loadedArrow.yBase, loadedArrow.xTip, loadedArrow.yTip)     
     //move fired arrows
     arrowTrafficControl()
-    //render targets
-    testTarget.render()
 }
 
 /////////////////////
@@ -302,7 +303,10 @@ window.addEventListener('DOMContentLoaded', (e) => {
     // arrow270.render()
     //load other objs
     theBow.render()
-    testTarget.render()
+    for (let i = 0; i < targets.length; i++)
+        {
+            targets[i].render()
+        }
     let gameInterval = setInterval(gameLoop, 70)
 })
 
@@ -315,15 +319,17 @@ bowPic.addEventListener('load', e => {
 
 ///////TO DO's
 
-// rotate bow with loaded arrow
 
-//detect a tip-bullseye collision
 //make targets move
+    //have targets generate above the visible canvas
+    //make targets move down the screen with every gameLoop
+//detect a tip-bullseye collision
 ////////ensure tip-bullseye collisions are detected on moving targets!
 
 //increment player 1 points when bullseye detected
 //set a timer to switch player turns after 30 secons
 //highlight the point counter of the player who's up
+
 //implement a start button for the beginning of each turn
 //set a winning threshold at which poin the game stops
 //display the winning message (+refresh to replay)
