@@ -167,12 +167,22 @@ const drawTarget = (x, y) => {
 ///////////////////////////////
 // shift every arrow on the board 5 pixels along its given path
 const arrowThruster = (arrow) => {
-arrow.radius += 5
-arrow.xTip = angleToX(arrow.angle, arrow.radius)
-arrow.yTip = angleToY(arrow.angle, arrow.radius)
-arrow.xBase = angleToX(arrow.angle, (arrow.radius - 27))
-arrow.yBase = angleToY(arrow.angle, arrow.radius -27)
-arrow.render()
+    if (arrow.isBullseye === true) {
+        arrow.radius += 5
+        arrow.xTip = angleToX(arrow.angle, arrow.radius)
+        arrow.yTip = angleToY(arrow.angle, arrow.radius)
+        arrow.xBase = angleToX(arrow.angle, (arrow.radius - 27))
+        arrow.yBase = angleToY(arrow.angle, arrow.radius -27)
+        //arrow not rendered but still moved so it doesnt earn another point 
+    } else if (arrow.isBullseye === false) {
+        arrow.radius += 5
+        arrow.xTip = angleToX(arrow.angle, arrow.radius)
+        arrow.yTip = angleToY(arrow.angle, arrow.radius)
+        arrow.xBase = angleToX(arrow.angle, (arrow.radius - 27))
+        arrow.yBase = angleToY(arrow.angle, arrow.radius -27)
+        arrow.render()
+}
+
 }
 
 const arrowTrafficControl = () => {
@@ -232,6 +242,7 @@ function Arrow (xBase, yBase, angle) {
     this.yTip = angleToY(angle, 27)
     this.angle = angle
     this.radius = 27
+    this.isBullseye = false
     //then declare same type of render method
     this.render = function () {
         drawArrow(this.xBase, this.yBase, this.xTip, this.yTip)
@@ -300,11 +311,13 @@ const bullsEyeDetector = () => {
                 firedArrows[i].yTip < (targets[j].y + 3.54) &&
                 firedArrows[i].yTip > (targets[j].y - 3.54)
             ) { if (playerOne.isUp === true) {
+                firedArrows[i].isBullseye = true
                 playerOne.points++
                 p1pointsDisplay.innerText = playerOne.points
                 console.log("playerOne has " + playerOne.points)
                 checkForWinner(playerOne)
             } else if (playerOne.isUp === false) {
+                firedArrows[i].isBullseye = true
                 playerTwo.points++
                 p2pointsDisplay.innerText = playerTwo.points
                 console.log("playerTwo has " + playerTwo.points)
@@ -327,9 +340,9 @@ const gameLoop = () => {
     {
         targets[i].render()
     }
-    //render arrows
+    //render loaded arrow
     drawArrow(loadedArrow.xBase, loadedArrow.yBase, loadedArrow.xTip, loadedArrow.yTip)     
-    //move fired arrows
+    //move and render fired arrows
     arrowTrafficControl()
     //check bullseye and win conditions
     bullsEyeDetector()
