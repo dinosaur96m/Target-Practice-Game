@@ -12,6 +12,8 @@ const moveDisplay = document.getElementById('movement')
 const ctx = game.getContext('2d')
 //add bow image
 const bowPic = new Image(27, 27);
+const p1pointsDisplay = document.getElementById("p1points")
+const p2pointsDisplay = document.getElementById("p2points")
 bowPic.src = "css/arhcers_bow.png"
 ////////////////////////////////////////
 ///////////Functions needed before/////////
@@ -42,8 +44,20 @@ console.log(firstArrowXy)
 let loadedArrow =  new Arrow(firstArrowXy[0],firstArrowXy[1], 180)
 let firedArrows = []
 let targets = [new Target(40, -15), new Target(110, -30), new Target(210, -60), new Target(260, -90)]
-let player1points = 0
+let playerOne = {
+    name: "Player 1",
+    isUp: true,
+    points: 0,
+    isWinner: false
+}
+let playerTwo = {
+    name: "Player 2",
+    points: 0,
+    isWinner: false
+}
+let isP1up = true
 let gameInterval
+
 
 /////TESTING TESTING TESTING 123////
 
@@ -268,9 +282,16 @@ const leftRightHandler = (e) => {
     }
 }
 
-////////////////////////
-//////////Game Loop
-///////////////////////
+////////////////////////////
+/////////Game Loop////////////
+///////////////////////////
+const checkForWinner = (player) => {
+    if (player.points >= 10) {
+        player.isWinner = true
+        clearInterval(gameInterval)
+        console.log(player.name + "is the winner!")
+    }
+}
 const bullsEyeDetector = () => {
     for (let i = 0; i < firedArrows.length; i++) {
         for (let j = 0; j < targets.length; j++) {
@@ -278,12 +299,16 @@ const bullsEyeDetector = () => {
                 firedArrows[i].xTip > (targets[j].x - 3.54) &&
                 firedArrows[i].yTip < (targets[j].y + 3.54) &&
                 firedArrows[i].yTip > (targets[j].y - 3.54)
-            ) {
-                player1points++
-                console.log("One point for player1! you now have " + player1points + " points!")
-                if (player1points >= 10) {
-                    clearInterval(gameInterval)
-                    console.log("player 1 wins!")
+            ) { if (playerOne.isUp === true) {
+                playerOne.points++
+                p1pointsDisplay.innerText = playerOne.points
+                console.log("playerOne has " + playerOne.points)
+                checkForWinner(playerOne)
+            } else if (playerOne.isUp === false) {
+                playerTwo.points++
+                p2pointsDisplay.innerText = playerTwo.points
+                console.log("playerTwo has " + playerTwo.points)
+                checkForWinner(playerTwo)
                 }
             }
         }
@@ -353,7 +378,10 @@ bowPic.addEventListener('load', e => {
 /////MVP will be achieved when above steps are complete!////
 /////////////////////////////////////////
 
+////////////////////////////////////
 //unlisted and simple STRETCH Goals
+//////////////////////////////////
+//make winning arrows fall with their target for the rest of a turn
 //implement a 'Play again' button with the winning message
 //display a timer counting down each players turn
 //display message telling the player their turn is up
