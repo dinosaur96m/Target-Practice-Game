@@ -10,6 +10,11 @@ const moveDisplay = document.getElementById('movement')
 //now w e need to get the game's context so we can dd to it , draw on it, create animations etc
 //we do this with the built in canvas method, get Context
 const ctx = game.getContext('2d')
+//add bow image
+const bowPic = new Image(27, 27);
+bowPic.src = "css/arhcers_bow.png"
+document.querySelector('body').appendChild(bowPic)
+
 ////////////////////////////////////////
 ///////////Functions needed before/////////
 ///////////declaring universal variables/////
@@ -55,28 +60,6 @@ let firedArrows = []
 /////////////////////////////////
 //draw bow
 /////////////////////////////////
-const drawCurve = (radius, x, y) => {
-    ctx.lineWidth = 1
-    ctx.beginPath()
-    ctx.arc(x, y, radius, 0, Math.PI, true)
-    ctx.strokeStyle = "blueviolet"
-    ctx.stroke()
-    ctx.fillStyle = "blueviolet"
-    ctx.fill()
-    ctx.closePath()
-
-}
-
-const drawArrowLine = (x, y) => {
-    ctx.lineWidth = 1
-    ctx.beginPath()
-    ctx.moveTo((game.width / 2), (game.height - 1))
-    ctx.lineTo(x, y)
-    ctx.strokeStyle = "blueviolet"
-    ctx.stroke()
-    ctx.closePath()
-}
-
 const drawRightString = (x, y) => {
     ctx.lineWidth = 1
     ctx.beginPath()
@@ -97,13 +80,7 @@ const drawLeftString = (x, y) => {
 }
 
 //call prior functions to put the bow together 
-const drawBow = (radius, xCenter, yCenter, xTip, yTip, xRight, yRight, xLeft, yLeft) => {
-    console.log(`xTip = ${xTip}\n yTip = ${yTip}\n xCenter = ${xCenter}\n yCenter = ${yCenter}`)
-    console.log(`Bottom x = ${game.width / 2}\n Bottom y = ${game.height - 1}`)
-    //draw bow curve
-    drawCurve(radius, xCenter, yCenter)
-    //draw arrow line on bow
-    drawArrowLine(xTip, yTip)
+const drawBow = (xRight, yRight, xLeft, yLeft) => {
     //right string
     drawRightString(xRight, yRight)
     //left string
@@ -213,18 +190,13 @@ const arrowTrafficControl = () => {
 //left string to: ((game.width / 2) - radius), (game.height - (radius * 2)))
 
 //building the bow
-function Bow (radius, xCenter, yCenter, xTip, yTip, xRight, yRight, xLeft, yLeft) {
-    this.radius = radius
-    this.xCenter = xCenter
-    this.yCenter = yCenter
-    this.xTip = xTip
-    this.yTip = yTip
+function Bow (xRight, yRight, xLeft, yLeft) {
     this.xRight = xRight
     this.yRight = yRight
     this.xLeft = xLeft
     this.yLeft = yLeft
     this.render = function () {
-        drawBow(radius, xCenter, yCenter, xTip, yTip, xRight, yRight, xLeft, yLeft)
+        drawBow(xRight, yRight, xLeft, yLeft)
     }
 }
 
@@ -306,6 +278,7 @@ const gameLoop = () => {
     testTarget.render()
     //re-draw Bow
     drawBow(theBow.radius, theBow.xCenter, theBow.yCenter, theBow.xTip, theBow.yTip, theBow.xRight, theBow.yRight, theBow.xLeft, theBow.yLeft)
+    ctx.drawImage(bowPic, (150 - (loadedArrow.radius / 2 + 20)), (game.height - 35), (loadedArrow.radius * 2.5), (loadedArrow.radius * 2.5))
     // theBow.render()
     //render arrows
     drawArrow(loadedArrow.xBase, loadedArrow.yBase, loadedArrow.xTip, loadedArrow.yTip)
@@ -335,11 +308,14 @@ window.addEventListener('DOMContentLoaded', (e) => {
 
 document.addEventListener('keyup', spaceBarHandler)
 document.addEventListener('keydown', leftRightHandler)
+bowPic.addEventListener('load', e => {
+    console.log("drawing bow!")
+    ctx.drawImage(bowPic, (150 - (loadedArrow.radius / 2 + 13)), (game.height - 28), (loadedArrow.radius * 2), (loadedArrow.radius * 2))
+});
 
 ///////TO DO's
-///////ensure new arrows render correctly according to bow position
-    //incoproate angle into the Arrow class so new arrows can folow the path (or they get it from the
-    //current state of loaded Arrow)
+
+// rotate bow with loaded arrow
 
 //detect a tip-bullseye collision
 //make targets move
