@@ -4,19 +4,20 @@
 //////////////////////////////////////////
 //we need to get our canvas, save it to a varible, so we can access and utilize it 
 const game = document.getElementById('canvas')
-//here we'll get the movement tracker
-const moveDisplay = document.getElementById('movement')
-
-//now w e need to get the game's context so we can dd to it , draw on it, create animations etc
-//we do this with the built in canvas method, get Context
+//get context
 const ctx = game.getContext('2d')
 //add bow image
 const bowPic = new Image(27, 27);
+bowPic.src = "css/arhcers_bow.png"
+//Player Points Displays
 const p1pointsDisplay = document.getElementById("p1points")
 const p2pointsDisplay = document.getElementById("p2points")
 const p1Box = document.getElementById("p1-btm-left")
 const p2Box = document.getElementById("p2-btm-right")
-bowPic.src = "css/arhcers_bow.png"
+//Start button area
+const startButton = document.getElementById("startButton")
+const buttonSub = document.getElementById("buttonSub")
+
 ////////////////////////////////////////
 ///////////Functions needed before/////////
 ///////////declaring universal variables/////
@@ -253,7 +254,7 @@ function Arrow (xBase, yBase, angle) {
 
 
 /////////////////////////////////
-////////Movement handler/////////
+////////Event handlers/////////
 ////////////////////////////////
 const spaceBarHandler = (e) => {
     if (e.keyCode === 32) {
@@ -332,15 +333,21 @@ const bullsEyeDetector = () => {
 
 const switchTurns = () => {
     if (playerOne.isUp === true) {
+        clearInterval(gameInterval)
+        clearInterval(turnInterval)
         p1Box.style.backgroundColor = "whitesmoke"
         p2Box.style.backgroundColor = "#00DCDC"
         playerOne.isUp = false
         console.log("player 2 is up now!")
+        startButton.disabled = false
     } else if (playerOne.isUp === false) {
+        clearInterval(gameInterval)
+        clearInterval(turnInterval)
         p1Box.style.backgroundColor = "#00DCDC"
         p2Box.style.backgroundColor = "whitesmoke"
         playerOne.isUp = true
         console.log("player 1's Turn now!")
+        startButton.disabled = false
     }
 }
 
@@ -380,21 +387,23 @@ window.addEventListener('DOMContentLoaded', (e) => {
         {
             targets[i].render()
         }
-    gameInterval = setInterval(gameLoop, 70)
-    turnInterval = setInterval(switchTurns, 30000)
 })
 
 document.addEventListener('keyup', spaceBarHandler)
 document.addEventListener('keydown', leftRightHandler)
 bowPic.addEventListener('load', e => {
-    console.log("drawing bow!")
     ctx.drawImage(bowPic, (150 - (loadedArrow.radius / 2 + 13)), (game.height - 28), (loadedArrow.radius * 2), (loadedArrow.radius * 2))
+})
+startButton.addEventListener('click', (e) => {
+    console.log("R2P clicked!")
+    gameInterval = setInterval(gameLoop, 70)
+    turnInterval = setInterval(switchTurns, 30000)
+    startButton.disabled = true
 });
+
 
 ///////TO DO's
 
-//set a timer to switch player turns after 30 seconds
-//highlight the point counter of the player who's up
 
 //implement a start button for the beginning of each turn
 //set a winning threshold at which poin the game stops
