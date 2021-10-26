@@ -21,13 +21,11 @@ bowPic.src = "css/arhcers_bow.png"
 //get the math in a function that can reassaign or return the xTip and yTip for a given arrow
 const angleToX = (angle, radius) => {
     let x = ( radius * Math.sin(angle *  0.0174532925) ) + 150
-    console.log('angleToX: x= ', x)
     return x
 }
 const angleToY = (angle, radius) => {
     radius
     let y = radius * Math.cos(angle * 0.0174532925) + 149
-    console.log('angleToY: y= ' + y)
     return y
 }
 
@@ -44,7 +42,8 @@ console.log(firstArrowXy)
 let loadedArrow =  new Arrow(firstArrowXy[0],firstArrowXy[1], 180)
 let firedArrows = []
 let targets = [new Target(40, -15), new Target(110, -30), new Target(210, -60), new Target(260, -90)]
-
+let player1points = 0
+let gameInterval
 
 /////TESTING TESTING TESTING 123////
 
@@ -159,7 +158,6 @@ arrow.xTip = angleToX(arrow.angle, arrow.radius)
 arrow.yTip = angleToY(arrow.angle, arrow.radius)
 arrow.xBase = angleToX(arrow.angle, (arrow.radius - 27))
 arrow.yBase = angleToY(arrow.angle, arrow.radius -27)
-console.log('new arrow coOrds:' + arrow.xBase + arrow.yBase + arrow.xTip + arrow.yTip)
 arrow.render()
 }
 
@@ -273,6 +271,24 @@ const leftRightHandler = (e) => {
 ////////////////////////
 //////////Game Loop
 ///////////////////////
+const bullsEyeDetector = () => {
+    for (let i = 0; i < firedArrows.length; i++) {
+        for (let j = 0; j < targets.length; j++) {
+            if (firedArrows[i].xTip < (targets[j].x + 3.54) && 
+                firedArrows[i].xTip > (targets[j].x - 3.54) &&
+                firedArrows[i].yTip < (targets[j].y + 3.54) &&
+                firedArrows[i].yTip > (targets[j].y - 3.54)
+            ) {
+                player1points++
+                console.log("One point for player1! you now have " + player1points + " points!")
+                if (player1points >= 10) {
+                    clearInterval(gameInterval)
+                    console.log("player 1 wins!")
+                }
+            }
+        }
+    }
+}
 const gameLoop = () => {
     //clear the canvas
     ctx.clearRect(0, 0, game.width, game.height)
@@ -290,6 +306,8 @@ const gameLoop = () => {
     drawArrow(loadedArrow.xBase, loadedArrow.yBase, loadedArrow.xTip, loadedArrow.yTip)     
     //move fired arrows
     arrowTrafficControl()
+    //check bullseye and win conditions
+    bullsEyeDetector()
 }
 
 /////////////////////
@@ -307,7 +325,7 @@ window.addEventListener('DOMContentLoaded', (e) => {
         {
             targets[i].render()
         }
-    let gameInterval = setInterval(gameLoop, 70)
+    gameInterval = setInterval(gameLoop, 70)
 })
 
 document.addEventListener('keyup', spaceBarHandler)
@@ -319,12 +337,9 @@ bowPic.addEventListener('load', e => {
 
 ///////TO DO's
 
-
-//make targets move
-    //have targets generate above the visible canvas
-    //make targets move down the screen with every gameLoop
 //detect a tip-bullseye collision
 ////////ensure tip-bullseye collisions are detected on moving targets!
+////////make the arrow stop and fall with the target for the rest of the turn(fallback on making it disappear!)
 
 //increment player 1 points when bullseye detected
 //set a timer to switch player turns after 30 secons
