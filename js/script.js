@@ -37,11 +37,11 @@ const angleToY = (angle, radius) => {
 ///////////////////////////////////////////
 //////////Universal Variables/////////////////
 //////////////////////////////////////////
-const theBow = new Bow(8, (game.width / 2), (game.height - 16), 
-    (game.width / 2), (game.height - 28), 
-    ((game.width/ 2) + 8), (game.height - (16)),
-    ((game.width / 2) - 8), (game.height - (16))
-)
+// const theBow = new Bow(8, (game.width / 2), (game.height - 16), 
+//     (game.width / 2), (game.height - 28), 
+//     ((game.width/ 2) + 8), (game.height - (16)),
+//     ((game.width / 2) - 8), (game.height - (16))
+// )
 const firstArrowXy= [(game.width / 2), (game.height - 1), (game.width / 2), (game.height - 28)]
 console.log(firstArrowXy)
 let loadedArrow =  new Arrow(firstArrowXy[0],firstArrowXy[1], 180)
@@ -72,32 +72,32 @@ let gameInterval
 /////////////////////////////////
 //draw bow
 /////////////////////////////////
-const drawRightString = (x, y) => {
-    ctx.lineWidth = 1
-    ctx.beginPath()
-    ctx.moveTo((game.width / 2), (game.height - 1))
-    ctx.lineTo(x, y)
-    ctx.strokeStyle = "black"
-    ctx.stroke()
-    ctx.closePath()
-}
+// const drawRightString = (x, y) => {
+//     ctx.lineWidth = 1
+//     ctx.beginPath()
+//     ctx.moveTo((game.width / 2), (game.height - 1))
+//     ctx.lineTo(x, y)
+//     ctx.strokeStyle = "black"
+//     ctx.stroke()
+//     ctx.closePath()
+// }
 
-const drawLeftString = (x, y) => {
-    ctx.lineWidth = 1
-    ctx.beginPath()
-    ctx.moveTo((game.width / 2), (game.height - 1))
-    ctx.lineTo(x, y)
-    ctx.stroke()
-    ctx.closePath()
-}
+// const drawLeftString = (x, y) => {
+//     ctx.lineWidth = 1
+//     ctx.beginPath()
+//     ctx.moveTo((game.width / 2), (game.height - 1))
+//     ctx.lineTo(x, y)
+//     ctx.stroke()
+//     ctx.closePath()
+// }
 
-//call prior functions to put the bow together 
-const drawBow = (xRight, yRight, xLeft, yLeft) => {
-    //right string
-    drawRightString(xRight, yRight)
-    //left string
-    drawLeftString(xLeft, yLeft)
-}
+// //call prior functions to put the bow together 
+// const drawBow = (xRight, yRight, xLeft, yLeft) => {
+//     //right string
+//     drawRightString(xRight, yRight)
+//     //left string
+//     drawLeftString(xLeft, yLeft)
+// }
 ///////////////////////////
 ////Draw Arrows
 ///////////////////////////
@@ -217,15 +217,15 @@ const targetPusher = () => {
 //left string to: ((game.width / 2) - radius), (game.height - (radius * 2)))
 
 //building the bow
-function Bow (xRight, yRight, xLeft, yLeft) {
-    this.xRight = xRight
-    this.yRight = yRight
-    this.xLeft = xLeft
-    this.yLeft = yLeft
-    this.render = function () {
-        drawBow(xRight, yRight, xLeft, yLeft)
-    }
-}
+// function Bow (xRight, yRight, xLeft, yLeft) {
+//     this.xRight = xRight
+//     this.yRight = yRight
+//     this.xLeft = xLeft
+//     this.yLeft = yLeft
+//     this.render = function () {
+//         drawBow(xRight, yRight, xLeft, yLeft)
+//     }
+// }
 
 //Class for generating new targets
 function Target (x, y) {
@@ -299,6 +299,31 @@ const leftRightHandler = (e) => {
 ////////////////////////////
 /////////Game Loop////////////
 ///////////////////////////
+const freshScreen = () => {
+    //clear the canvas
+    ctx.clearRect(0, 0, game.width, game.height)
+    //re-center loaded arrow
+    loadedArrow.xBase = firstArrowXy[0]
+    loadedArrow.yBase = firstArrowXy[1]
+    loadedArrow.angle = 180
+    //move fired arrows off board
+    for (let i = 0; i < firedArrows.length; i++) {
+        firedArrows[i].radius = 550
+    }
+    //re-set Targets
+    targets[0].x = 40
+    targets[0].y = -15
+    targets[1].x = 110
+    targets[1].y = -30
+    targets[2].x = 210
+    targets[2].y = -60
+    targets[3].x = 260
+    targets[3].y = -90
+    //re-draw Bow
+    ctx.drawImage(bowPic, (150 - (loadedArrow.radius / 2 + 20)), (game.height - 35), (loadedArrow.radius * 2.5), (loadedArrow.radius * 2.5))
+    //render loaded arrow
+    drawArrow(firstArrowXy[0], firstArrowXy[1], firstArrowXy[2], firstArrowXy[3])  
+}
 const checkForWinner = (player) => {
     if (player.points >= 10) {
         player.isWinner = true
@@ -307,8 +332,11 @@ const checkForWinner = (player) => {
     }
 }
 const bullsEyeDetector = () => {
+    //check every arrow
     for (let i = 0; i < firedArrows.length; i++) {
+        //in relation to every target
         for (let j = 0; j < targets.length; j++) {
+            //is the arrow withing the bullseye (a saquare that fits inside)?
             if (firedArrows[i].xTip < (targets[j].x + 3.54) && 
                 firedArrows[i].xTip > (targets[j].x - 3.54) &&
                 firedArrows[i].yTip < (targets[j].y + 3.54) &&
@@ -340,6 +368,7 @@ const switchTurns = () => {
         playerOne.isUp = false
         console.log("player 2 is up now!")
         startButton.disabled = false
+        freshScreen()
     } else if (playerOne.isUp === false) {
         clearInterval(gameInterval)
         clearInterval(turnInterval)
@@ -348,6 +377,7 @@ const switchTurns = () => {
         playerOne.isUp = true
         console.log("player 1's Turn now!")
         startButton.disabled = false
+        freshScreen()
     }
 }
 
@@ -355,9 +385,7 @@ const gameLoop = () => {
     //clear the canvas
     ctx.clearRect(0, 0, game.width, game.height)
     //re-draw Bow
-    drawBow(theBow.radius, theBow.xCenter, theBow.yCenter, theBow.xTip, theBow.yTip, theBow.xRight, theBow.yRight, theBow.xLeft, theBow.yLeft)
     ctx.drawImage(bowPic, (150 - (loadedArrow.radius / 2 + 20)), (game.height - 35), (loadedArrow.radius * 2.5), (loadedArrow.radius * 2.5))
-    // theBow.render()
     //render targets
     targetPusher()
     for (let i = 0; i < targets.length; i++)
@@ -379,14 +407,7 @@ window.addEventListener('DOMContentLoaded', (e) => {
     console.log("Hello HTML")
     //create and render arrows
     loadedArrow.render()
-    // arrow225.render()
-    // arrow270.render()
     //load other objs
-    theBow.render()
-    for (let i = 0; i < targets.length; i++)
-        {
-            targets[i].render()
-        }
 })
 
 document.addEventListener('keyup', spaceBarHandler)
@@ -398,8 +419,12 @@ startButton.addEventListener('click', (e) => {
     console.log("R2P clicked!")
     gameInterval = setInterval(gameLoop, 70)
     turnInterval = setInterval(switchTurns, 30000)
+    for (let i = 0; i < targets.length; i++)
+    {
+        targets[i].render()
+    }
     startButton.disabled = true
-});
+})
 
 
 ///////TO DO's
