@@ -37,16 +37,17 @@ const angleToY = (angle, radius) => {
 ///////////////////////////////////////////
 //////////Universal Variables/////////////////
 //////////////////////////////////////////
-// const theBow = new Bow(8, (game.width / 2), (game.height - 16), 
-//     (game.width / 2), (game.height - 28), 
-//     ((game.width/ 2) + 8), (game.height - (16)),
-//     ((game.width / 2) - 8), (game.height - (16))
-// )
+//bow
+let theBow = new Bow(8, 180, 154, 207)
+
+//arrows
 const firstArrowXy= [(game.width / 2), (game.height - 1), (game.width / 2), (game.height - 28)]
 console.log(firstArrowXy)
 let loadedArrow =  new Arrow(firstArrowXy[0],firstArrowXy[1], 180)
 let firedArrows = []
+//targets
 let targets = [new Target(40, -15), new Target(110, -30), new Target(210, -60), new Target(260, -90)]
+//players
 let playerOne = {
     name: "Player 1",
     isUp: true,
@@ -69,35 +70,57 @@ let gameInterval
 //////////Functions//////////////////////////
 //////////////////////////////////////////
 
-/////////////////////////////////
-//draw bow
-/////////////////////////////////
-// const drawRightString = (x, y) => {
-//     ctx.lineWidth = 1
-//     ctx.beginPath()
-//     ctx.moveTo((game.width / 2), (game.height - 1))
-//     ctx.lineTo(x, y)
-//     ctx.strokeStyle = "black"
-//     ctx.stroke()
-//     ctx.closePath()
-// }
+///////////////////////////////
+// /draw bow
+///////////////////////////////
+    const drawCurve = (curveRadius, angle) => {
+        let x = angleToX(angle, 15)
+        let y = angleToY(angle, 15)
+        ctx.lineWidth = 1
+        ctx.beginPath()
+        // ctx.arc((game.width / 2), (game.height - (curveRadius * 2)), curveRadius, 0, Math.PI, true)
+        ctx.arc(x, y, curveRadius, 0, Math.PI, true)
+        ctx.strokeStyle = "blueviolet"
+        ctx.stroke()
+        ctx.fillStyle = "blueviolet"
+        ctx.fill()
+        ctx.closePath()
+    
+    }
 
-// const drawLeftString = (x, y) => {
-//     ctx.lineWidth = 1
-//     ctx.beginPath()
-//     ctx.moveTo((game.width / 2), (game.height - 1))
-//     ctx.lineTo(x, y)
-//     ctx.stroke()
-//     ctx.closePath()
-// }
+const drawRightString = (angle) => {
+    let x = angleToX(angle, 18)
+    let y = angleToY(angle, 18)
+    ctx.lineWidth = 1
+    ctx.beginPath()
+    ctx.moveTo((game.width / 2), (game.height - 1))
+    ctx.lineTo(x, y)
+    ctx.strokeStyle = "black"
+    ctx.stroke()
+    ctx.closePath()
+}
 
-// //call prior functions to put the bow together 
-// const drawBow = (xRight, yRight, xLeft, yLeft) => {
-//     //right string
-//     drawRightString(xRight, yRight)
-//     //left string
-//     drawLeftString(xLeft, yLeft)
-// }
+const drawLeftString = (angle) => {
+    let x = angleToX(angle, 18)
+    let y = angleToY(angle, 18)
+    ctx.lineWidth = 1
+    ctx.beginPath()
+    ctx.moveTo((game.width / 2), (game.height - 1))
+    ctx.lineTo(x, y)
+    ctx.stroke()
+    ctx.closePath()
+}
+
+//call prior functions to put the bow together 
+    const drawBow = (curveRadius, centerAngle, rightAngle, leftAngle) => {
+        //draw bow curve
+        drawCurve(curveRadius, centerAngle)
+        //right string
+        drawRightString(rightAngle)
+        //left string
+        drawLeftString(leftAngle)
+    }
+
 ///////////////////////////
 ////Draw Arrows
 ///////////////////////////
@@ -211,21 +234,22 @@ const targetPusher = () => {
 //////////CLASSES//////////////////////////
 //////////////////////////////////////////
 
-//curve: ctx.arc((game.width / 2), (game.height - (radius * 2)), radius, 0, Math.PI, true)
-//arrow line to: ((game.width / 2), (game.height - (radius * 3.5)))
-//right string to: (((game.width / 2) + radius ), (game.height - (radius *2)))
-//left string to: ((game.width / 2) - radius), (game.height - (radius * 2)))
+// curve: ctx.arc((game.width / 2), (game.height - (radius * 2)), radius, 0, Math.PI, true)
+// arrow line to: ((game.width / 2), (game.height - (radius * 3.5)))
+// right string to: (((game.width / 2) + radius ), (game.height - (radius *2)))
+// left string to: ((game.width / 2) - radius), (game.height - (radius * 2)))
 
-//building the bow
-// function Bow (xRight, yRight, xLeft, yLeft) {
-//     this.xRight = xRight
-//     this.yRight = yRight
-//     this.xLeft = xLeft
-//     this.yLeft = yLeft
-//     this.render = function () {
-//         drawBow(xRight, yRight, xLeft, yLeft)
-//     }
-// }
+// building the bow
+function Bow (curveRadius, centerAngle, rightAngle, leftAngle) {
+    this.curveRadius = curveRadius
+    this.centerAngle = centerAngle
+    this.rightAngle = rightAngle
+    this.leftAngle = leftAngle
+    this.render = function () {
+        drawBow(this.curveRadius, this.centerAngle, this.rightAngle, this.leftAngle)
+    }
+}
+
 
 //Class for generating new targets
 function Target (x, y) {
@@ -264,6 +288,7 @@ const spaceBarHandler = (e) => {
         let index = firedArrows.length - 1
         //move the newly fired arrow forward on its journey
         arrowThruster(firedArrows[index])
+        console.log(`loadedArrow angle is: ${loadedArrow.angle}`)
         }
     }
 
@@ -310,6 +335,7 @@ const freshScreen = () => {
     for (let i = 0; i < firedArrows.length; i++) {
         firedArrows[i].radius = 550
     }
+
     //re-set Targets
     targets[0].x = 40
     targets[0].y = -15
@@ -319,8 +345,10 @@ const freshScreen = () => {
     targets[2].y = -60
     targets[3].x = 260
     targets[3].y = -90
+
     //re-draw Bow
-    ctx.drawImage(bowPic, (150 - (loadedArrow.radius / 2 + 20)), (game.height - 35), (loadedArrow.radius * 2.5), (loadedArrow.radius * 2.5))
+    theBow.render()
+    // ctx.drawImage(bowPic, (150 - (loadedArrow.radius / 2 + 20)), (game.height - 35), (loadedArrow.radius * 2.5), (loadedArrow.radius * 2.5))
     //render loaded arrow
     drawArrow(firstArrowXy[0], firstArrowXy[1], firstArrowXy[2], firstArrowXy[3]) 
     //bring back button
@@ -331,6 +359,7 @@ const checkForWinner = (player) => {
     if (player.points >= 15) {
         player.isWinner = true
         clearInterval(gameInterval)
+        clearInterval(turnInterval)
         console.log(player.name + "is the winner!")
         freshScreen()
         startButton.style.display = "none"
@@ -393,7 +422,8 @@ const gameLoop = () => {
     //clear the canvas
     ctx.clearRect(0, 0, game.width, game.height)
     //re-draw Bow
-    ctx.drawImage(bowPic, (150 - (loadedArrow.radius / 2 + 20)), (game.height - 35), (loadedArrow.radius * 2.5), (loadedArrow.radius * 2.5))
+    theBow.render()
+    // ctx.drawImage(bowPic, (150 - (loadedArrow.radius / 2 + 20)), (game.height - 35), (loadedArrow.radius * 2.5), (loadedArrow.radius * 2.5))
     //render targets
     targetPusher()
     for (let i = 0; i < targets.length; i++)
@@ -415,14 +445,16 @@ window.addEventListener('DOMContentLoaded', (e) => {
     console.log("Hello HTML")
     //create and render arrows
     loadedArrow.render()
+    theBow.render()
+    console.log(theBow.curveRadius)
     //load other objs
 })
 
 document.addEventListener('keyup', spaceBarHandler)
 document.addEventListener('keydown', leftRightHandler)
-bowPic.addEventListener('load', e => {
-    ctx.drawImage(bowPic, (150 - (loadedArrow.radius / 2 + 13)), (game.height - 28), (loadedArrow.radius * 2), (loadedArrow.radius * 2))
-})
+// bowPic.addEventListener('load', e => {
+//     ctx.drawImage(bowPic, (150 - (loadedArrow.radius / 2 + 13)), (game.height - 28), (loadedArrow.radius * 2), (loadedArrow.radius * 2))
+// })
 startButton.addEventListener('click', (e) => {
     console.log("R2P clicked!")
     gameInterval = setInterval(gameLoop, 70)
@@ -440,10 +472,7 @@ startButton.addEventListener('click', (e) => {
 ///////TO DO's
 
 
-//implement a start button for the beginning of each turn
-//set a winning threshold at which poin the game stops
-//display the winning message (+refresh to replay)
-
+//make the bow turn :/
 /////////^^^^^^^^//////////////////
 /////MVP will be achieved when above steps are complete!////
 /////////////////////////////////////////
