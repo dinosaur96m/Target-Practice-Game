@@ -191,48 +191,6 @@ const drawTarget = (x, y) => {
 /////^^^^^^^////////////////////////////////////////////Track Yellow for Bullseye!!
 }
 
-////////////////////////////////
-///////Track Moving Objects
-///////////////////////////////
-// shift every arrow on the board 5 pixels along its given path
-const arrowThruster = (arrow) => {
-    if (arrow.isBullseye === true) {
-        arrow.radius += 5
-        arrow.xTip = angleToX(arrow.angle, arrow.radius)
-        arrow.yTip = angleToY(arrow.angle, arrow.radius)
-        arrow.xBase = angleToX(arrow.angle, (arrow.radius - 27))
-        arrow.yBase = angleToY(arrow.angle, arrow.radius -27)
-        //arrow not rendered but still moved so it doesnt earn another point 
-    } else if (arrow.isBullseye === false) {
-        arrow.radius += 5
-        arrow.xTip = angleToX(arrow.angle, arrow.radius)
-        arrow.yTip = angleToY(arrow.angle, arrow.radius)
-        arrow.xBase = angleToX(arrow.angle, (arrow.radius - 27))
-        arrow.yBase = angleToY(arrow.angle, arrow.radius -27)
-        arrow.render()
-}
-
-}
-
-const arrowTrafficControl = () => {
-    for (let i = 0; i < firedArrows.length; i++ ) {
-        if (firedArrows[i].yBase < 0 || firedArrows[i].yBase < 0) {
-        
-        } else {
-            arrowThruster(firedArrows[i])
-        }
-    }
-    }
-
-const targetPusher = () => {
-    for (let i = 0; i < targets.length; i++)
-    if ((targets[i].y - 15) > game.height) {
-        targets[i].y = -16
-    } else {
-        targets[i].y++
-    }
-}
-
 ///////////////////////////////////////////
 //////////CLASSES//////////////////////////
 //////////////////////////////////////////
@@ -279,6 +237,45 @@ function Arrow (xBase, yBase, angle) {
     }
 }
 
+////////////////////////////////
+///////Track Moving Objects
+///////////////////////////////
+// shift every arrow on the board 5 pixels along its given path
+const arrowThruster = (arrow) => {
+    if (arrow.isBullseye === true) {
+        arrow.yBase++
+        arrow.yTip++
+        arrow.render()
+        //arrow not rendered but still moved so it doesnt earn another point 
+    } else if (arrow.isBullseye === false) {
+        arrow.radius += 5
+        arrow.xTip = angleToX(arrow.angle, arrow.radius)
+        arrow.yTip = angleToY(arrow.angle, arrow.radius)
+        arrow.xBase = angleToX(arrow.angle, (arrow.radius - 27))
+        arrow.yBase = angleToY(arrow.angle, arrow.radius -27)
+        arrow.render()
+}
+
+}
+
+const arrowTrafficControl = () => {
+    for (let i = 0; i < firedArrows.length; i++ ) {
+        if (firedArrows[i].yBase < 0 || firedArrows[i].xBase < 0 || firedArrows[i].yTip > game.height) {
+        
+        } else {
+                arrowThruster(firedArrows[i])
+        }
+    }
+    }
+
+const targetPusher = () => {
+    for (let i = 0; i < targets.length; i++)
+    if ((targets[i].y - 15) > game.height) {
+        targets[i].y = -16
+    } else {
+        targets[i].y++
+    }
+}
 
 /////////////////////////////////
 ////////Event handlers/////////
@@ -308,10 +305,6 @@ const leftRightHandler = (e) => {
             theBow.centerAngle +=5
             theBow.rightAngle +=5
             theBow.leftAngle += 5
-            startAngle += 0.0174532925
-            console.log(startAngle)
-            endAngle -= 0.0174532925
-            console.log(endAngle)
             if (loadedArrow.angle >= 270) {
                 //arrow boundary
                 loadedArrow.angle = 270
@@ -334,10 +327,6 @@ const leftRightHandler = (e) => {
             theBow.centerAngle -=5
             theBow.rightAngle -=5
             theBow.leftAngle -=5
-            startAngle -= 0.0174532925
-            console.log(startAngle)
-            endAngle += 0.0174532925
-            console.log(endAngle)
             if (loadedArrow.angle <= 90 ) {
                 //arrow boundary
                 loadedArrow.angle = 90
@@ -388,6 +377,7 @@ const freshScreen = () => {
     buttonSub.style.display = "none" 
     startButton.style.display = "block"
 }
+
 const checkForWinner = (player) => {
     if (player.points >= 15) {
         player.isWinner = true
@@ -404,25 +394,32 @@ const checkForWinner = (player) => {
 const bullsEyeDetector = () => {
     //check every arrow
     for (let i = 0; i < firedArrows.length; i++) {
-        //in relation to every target
-        for (let j = 0; j < targets.length; j++) {
-            //is the arrow withing the bullseye (a saquare that fits inside)?
-            if (firedArrows[i].xTip < (targets[j].x + 3.54) && 
-                firedArrows[i].xTip > (targets[j].x - 3.54) &&
-                firedArrows[i].yTip < (targets[j].y + 3.54) &&
-                firedArrows[i].yTip > (targets[j].y - 3.54)
-            ) { if (playerOne.isUp === true) {
-                firedArrows[i].isBullseye = true
-                playerOne.points++
-                p1pointsDisplay.innerText = playerOne.points
-                console.log("playerOne has " + playerOne.points)
-                checkForWinner(playerOne)
-            } else if (playerOne.isUp === false) {
-                firedArrows[i].isBullseye = true
-                playerTwo.points++
-                p2pointsDisplay.innerText = playerTwo.points
-                console.log("playerTwo has " + playerTwo.points)
-                checkForWinner(playerTwo)
+        //filter out already-winning arrows
+        if (firedArrows[i].isBullseye === true) {
+
+        } else {
+            //in relation to every target
+            for (let j = 0; j < targets.length; j++) {
+                //is the arrow withing the bullseye (a saquare that fits inside)?
+                if (firedArrows[i].xTip < (targets[j].x + 3.54) && 
+                    firedArrows[i].xTip > (targets[j].x - 3.54) &&
+                    firedArrows[i].yTip < (targets[j].y + 3.54) &&
+                    firedArrows[i].yTip > (targets[j].y - 3.54)
+                //give points to P1 if it's their turn
+                ) { if (playerOne.isUp === true) {
+                    firedArrows[i].isBullseye = true
+                    playerOne.points++
+                    p1pointsDisplay.innerText = playerOne.points
+                    console.log("playerOne has " + playerOne.points)
+                    checkForWinner(playerOne)
+                //give points to 2 if it's their turn
+                } else if (playerOne.isUp === false) {
+                    firedArrows[i].isBullseye = true
+                    playerTwo.points++
+                    p2pointsDisplay.innerText = playerTwo.points
+                    console.log("playerTwo has " + playerTwo.points)
+                    checkForWinner(playerTwo)
+                    }
                 }
             }
         }
@@ -471,9 +468,9 @@ const gameLoop = () => {
     bullsEyeDetector()
 }
 
+///////////////////////
+/////Event Listeners/////
 /////////////////////
-/////Event Listeners
-///////////////////
 window.addEventListener('DOMContentLoaded', (e) => {
     console.log("Hello HTML")
     //create and render arrows
@@ -505,7 +502,7 @@ startButton.addEventListener('click', (e) => {
 ///////TO DO's
 
 
-//make the bow turn :/
+
 /////////^^^^^^^^//////////////////
 /////MVP will be achieved when above steps are complete!////
 /////////////////////////////////////////
