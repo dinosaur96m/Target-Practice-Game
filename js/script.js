@@ -39,6 +39,8 @@ const angleToY = (angle, radius) => {
 //////////////////////////////////////////
 //bow
 let theBow = new Bow(8, 180, 154, 207)
+let startAngle
+let endAngle
 
 //arrows
 const firstArrowXy= [(game.width / 2), (game.height - 1), (game.width / 2), (game.height - 28)]
@@ -73,13 +75,14 @@ let gameInterval
 ///////////////////////////////
 // /draw bow
 ///////////////////////////////
-    const drawCurve = (curveRadius, angle) => {
-        let x = angleToX(angle, 15)
-        let y = angleToY(angle, 15)
+    const drawCurve = (curveRadius, centerAngle, rightAngle, leftAngle) => {
+        //get coordinates for center of cricle
+        let x = angleToX(centerAngle, 15)
+        let y = angleToY(centerAngle, 15)
+        //draw circle
         ctx.lineWidth = 1
         ctx.beginPath()
-        // ctx.arc((game.width / 2), (game.height - (curveRadius * 2)), curveRadius, 0, Math.PI, true)
-        ctx.arc(x, y, curveRadius, 0, Math.PI, true)
+        ctx.arc(x, y, curveRadius,  (0 * 0.0174532925),  (360 * 0.0174532925), true)
         ctx.strokeStyle = "blueviolet"
         ctx.stroke()
         ctx.fillStyle = "blueviolet"
@@ -114,7 +117,7 @@ const drawLeftString = (angle) => {
 //call prior functions to put the bow together 
     const drawBow = (curveRadius, centerAngle, rightAngle, leftAngle) => {
         //draw bow curve
-        drawCurve(curveRadius, centerAngle)
+        drawCurve(curveRadius, centerAngle, rightAngle, leftAngle)
         //right string
         drawRightString(rightAngle)
         //left string
@@ -297,25 +300,53 @@ const leftRightHandler = (e) => {
         case (81):
             console.log('Q detected!')
             //move Left
+            //move arrow
             loadedArrow.angle+= 5
             loadedArrow.xTip = angleToX(loadedArrow.angle, loadedArrow.radius)
             loadedArrow.yTip = angleToY(loadedArrow.angle, loadedArrow.radius)
+            //move bow
+            theBow.centerAngle +=5
+            theBow.rightAngle +=5
+            theBow.leftAngle += 5
+            startAngle += 0.0174532925
+            console.log(startAngle)
+            endAngle -= 0.0174532925
+            console.log(endAngle)
             if (loadedArrow.angle >= 270) {
+                //arrow boundary
                 loadedArrow.angle = 270
                 loadedArrow.xTip = angleToX(270, loadedArrow.radius)
                 loadedArrow.yTip = angleToY(270, loadedArrow.radius)
+                //bow boundary
+                theBow.centerAngle = 270
+                theBow.rightAngle = 270 - 26
+                theBow.leftAngle = 270 + 26
             }
             break
         case (69):
             console.log('E detected!')
             //move Right
+            //move arrow
             loadedArrow.angle-= 5
             loadedArrow.xTip = angleToX(loadedArrow.angle, loadedArrow.radius)
             loadedArrow.yTip = angleToY(loadedArrow.angle, loadedArrow.radius)
+            //move bow
+            theBow.centerAngle -=5
+            theBow.rightAngle -=5
+            theBow.leftAngle -=5
+            startAngle -= 0.0174532925
+            console.log(startAngle)
+            endAngle += 0.0174532925
+            console.log(endAngle)
             if (loadedArrow.angle <= 90 ) {
+                //arrow boundary
                 loadedArrow.angle = 90
                 loadedArrow.xTip = angleToX(90, loadedArrow.radius)
                 loadedArrow.yTip = angleToY(90, loadedArrow.radius)
+                //bow boundary
+                theBow.centerAngle = 90
+                theBow.rightAngle = 90 - 26
+                theBow.leftAngle = 90 + 26
             } 
             break
     }
@@ -335,7 +366,6 @@ const freshScreen = () => {
     for (let i = 0; i < firedArrows.length; i++) {
         firedArrows[i].radius = 550
     }
-
     //re-set Targets
     targets[0].x = 40
     targets[0].y = -15
@@ -345,8 +375,11 @@ const freshScreen = () => {
     targets[2].y = -60
     targets[3].x = 260
     targets[3].y = -90
-
     //re-draw Bow
+    let theBow = new Bow(8, 180, 154, 207)
+    theBow.centerAngle = 180
+    theBow.rightAngle = 154
+    theBow.leftAngle = 207
     theBow.render()
     // ctx.drawImage(bowPic, (150 - (loadedArrow.radius / 2 + 20)), (game.height - 35), (loadedArrow.radius * 2.5), (loadedArrow.radius * 2.5))
     //render loaded arrow
