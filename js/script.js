@@ -281,63 +281,73 @@ const targetPusher = () => {
 ////////Event handlers/////////
 ////////////////////////////////
 const spaceBarHandler = (e) => {
-    if (e.keyCode === 32) {
-        console.log('space bar released!')
-        //generate a new arrow with Arrow class
-        firedArrows[`${firedArrows.length}`] = new Arrow(firstArrowXy[0],firstArrowXy[1], loadedArrow.angle)
-        let index = firedArrows.length - 1
-        //move the newly fired arrow forward on its journey
-        arrowThruster(firedArrows[index])
-        console.log(`loadedArrow angle is: ${loadedArrow.angle}`)
-        }
+    //only react to keyup when a turn is being played
+    if (startButton.style.display === "none") {
+        if (e.keyCode === 32) {
+            console.log('space bar released!')
+            //generate a new arrow with Arrow class
+            firedArrows[`${firedArrows.length}`] = new Arrow(firstArrowXy[0],firstArrowXy[1], loadedArrow.angle)
+            let index = firedArrows.length - 1
+            //move the newly fired arrow forward on its journey
+            arrowThruster(firedArrows[index])
+            console.log(`loadedArrow angle is: ${loadedArrow.angle}`)
+            }
+    //dont react to keyup if a turn is not being played
+    } else if (startButton.style.display === "block") {
+
     }
+}
 
 const leftRightHandler = (e) => {
-    switch (e.keyCode) {
-        case (81):
-            console.log('Q detected!')
-            //move Left
-            //move arrow
-            loadedArrow.angle+= 5
-            loadedArrow.xTip = angleToX(loadedArrow.angle, loadedArrow.radius)
-            loadedArrow.yTip = angleToY(loadedArrow.angle, loadedArrow.radius)
-            //move bow
-            theBow.centerAngle +=5
-            theBow.rightAngle +=5
-            theBow.leftAngle += 5
-            if (loadedArrow.angle >= 270) {
-                //arrow boundary
-                loadedArrow.angle = 270
-                loadedArrow.xTip = angleToX(270, loadedArrow.radius)
-                loadedArrow.yTip = angleToY(270, loadedArrow.radius)
-                //bow boundary
-                theBow.centerAngle = 270
-                theBow.rightAngle = 270 - 26
-                theBow.leftAngle = 270 + 26
-            }
-            break
-        case (69):
-            console.log('E detected!')
-            //move Right
-            //move arrow
-            loadedArrow.angle-= 5
-            loadedArrow.xTip = angleToX(loadedArrow.angle, loadedArrow.radius)
-            loadedArrow.yTip = angleToY(loadedArrow.angle, loadedArrow.radius)
-            //move bow
-            theBow.centerAngle -=5
-            theBow.rightAngle -=5
-            theBow.leftAngle -=5
-            if (loadedArrow.angle <= 90 ) {
-                //arrow boundary
-                loadedArrow.angle = 90
-                loadedArrow.xTip = angleToX(90, loadedArrow.radius)
-                loadedArrow.yTip = angleToY(90, loadedArrow.radius)
-                //bow boundary
-                theBow.centerAngle = 90
-                theBow.rightAngle = 90 - 26
-                theBow.leftAngle = 90 + 26
-            } 
-            break
+    if (startButton.style.display === "none") {
+        switch (e.keyCode) {
+            case (81):
+                console.log('Q detected!')
+                //move Left
+                //move arrow
+                loadedArrow.angle+= 5
+                loadedArrow.xTip = angleToX(loadedArrow.angle, loadedArrow.radius)
+                loadedArrow.yTip = angleToY(loadedArrow.angle, loadedArrow.radius)
+                //move bow
+                theBow.centerAngle +=5
+                theBow.rightAngle +=5
+                theBow.leftAngle += 5
+                if (loadedArrow.angle >= 270) {
+                    //arrow boundary
+                    loadedArrow.angle = 270
+                    loadedArrow.xTip = angleToX(270, loadedArrow.radius)
+                    loadedArrow.yTip = angleToY(270, loadedArrow.radius)
+                    //bow boundary
+                    theBow.centerAngle = 270
+                    theBow.rightAngle = 270 - 26
+                    theBow.leftAngle = 270 + 26
+                }
+                break
+            case (69):
+                console.log('E detected!')
+                //move Right
+                //move arrow
+                loadedArrow.angle-= 5
+                loadedArrow.xTip = angleToX(loadedArrow.angle, loadedArrow.radius)
+                loadedArrow.yTip = angleToY(loadedArrow.angle, loadedArrow.radius)
+                //move bow
+                theBow.centerAngle -=5
+                theBow.rightAngle -=5
+                theBow.leftAngle -=5
+                if (loadedArrow.angle <= 90 ) {
+                    //arrow boundary
+                    loadedArrow.angle = 90
+                    loadedArrow.xTip = angleToX(90, loadedArrow.radius)
+                    loadedArrow.yTip = angleToY(90, loadedArrow.radius)
+                    //bow boundary
+                    theBow.centerAngle = 90
+                    theBow.rightAngle = 90 - 26
+                    theBow.leftAngle = 90 + 26
+                } 
+                break
+        }
+    } else if (startButton.style.display === "block") {
+
     }
 }
 
@@ -365,14 +375,19 @@ const freshScreen = () => {
     targets[3].x = 260
     targets[3].y = -90
     //re-draw Bow
-    let theBow = new Bow(8, 180, 154, 207)
     theBow.centerAngle = 180
     theBow.rightAngle = 154
     theBow.leftAngle = 207
-    theBow.render()
     // ctx.drawImage(bowPic, (150 - (loadedArrow.radius / 2 + 20)), (game.height - 35), (loadedArrow.radius * 2.5), (loadedArrow.radius * 2.5))
     //render loaded arrow
-    drawArrow(firstArrowXy[0], firstArrowXy[1], firstArrowXy[2], firstArrowXy[3]) 
+    drawArrow(firstArrowXy[0], firstArrowXy[1], firstArrowXy[2], firstArrowXy[3])
+    //render bow
+    theBow.render()
+    //render targets
+    for (let i = 0; i < targets.length; i++)
+    {
+        targets[i].render()
+    }
     //bring back button
     buttonSub.style.display = "none" 
     startButton.style.display = "block"
@@ -487,12 +502,9 @@ document.addEventListener('keydown', leftRightHandler)
 // })
 startButton.addEventListener('click', (e) => {
     console.log("R2P clicked!")
+    freshScreen()
     gameInterval = setInterval(gameLoop, 70)
-    turnInterval = setInterval(switchTurns, 30000)
-    for (let i = 0; i < targets.length; i++)
-    {
-        targets[i].render()
-    }
+    turnInterval = setInterval(switchTurns, 3000)
     startButton.disabled = true
     startButton.style.display = "none"
     buttonSub.style.display = "block"
