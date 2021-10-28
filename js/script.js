@@ -496,8 +496,8 @@ const switchTurns = () => {
         clearInterval(gameInterval)
         clearInterval(turnInterval)
         //switch two player two's turn
-        p1Box.style.backgroundColor = "whitesmoke"
-        p2Box.style.backgroundColor = "#00DCDC"
+        p1Box.style.backgroundColor = "#6AA84F"
+        p2Box.style.backgroundColor = "#FF006E"
         playerOne.isUp = false
         console.log("player 2 is up now!")
         //swap clock for title
@@ -512,8 +512,8 @@ const switchTurns = () => {
         clearInterval(gameInterval)
         clearInterval(turnInterval)
         //switch to player one's turn
-        p1Box.style.backgroundColor = "#00DCDC"
-        p2Box.style.backgroundColor = "whitesmoke"
+        p1Box.style.backgroundColor = "#FF006E"
+        p2Box.style.backgroundColor = "#6AA84F"
         playerOne.isUp = true
         console.log("player 1's Turn now!")
         //swap clock for title

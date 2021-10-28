@@ -8,38 +8,35 @@ html,body {
 body {
     padding-top: 1em;
     text-align: center;
-    background-color: teal;
+    background-color: #254441;
     /* background-image: url('../img/dungeonhell.png'); */
     background-size: cover;
     background-repeat: space;
-    font-family: 'Press Start 2P', monospace;
+    font-family: 'Irish Grover';
+    color: white;
 }
 
-h1, h2 {
-    font-family: 'Press Start 2P', monospace;
-    color: blueviolet;
-}
+
 
 .player {
-    font-family: 'Press Start 2P', monospace;
-    font-size: larger;
-    font-weight: bold;
-    color: blueviolet;
+    font-size: smaller;
 }
 
 #title {
     display: block;
+    font-size: xx-large;
 }
 #clock {
     display: none;
+    font-size: xx-large;
 }
 #startButton {
-    background-color: #00DCDC;
-    color: blueviolet;
+    background-color: #9900FF;
+    font-family: 'Irish Grover';
+    color: white;
     font-weight: bold;
-    font-size: x-large;
+    font-size: xx-large;
     padding: 5px;
-    font-family: 'Press Start 2P', monospace;
 }
 
 #buttonSub {
@@ -58,8 +55,8 @@ canvas {
 #container {
 max-width: 50em;
 /* height: 70vh; */
-background-color:violet;
-margin: 0 auto;
+background-color: #ddd1c7;
+margin: 1% auto;
 padding: 1em;
 display: grid;
 grid-gap: 1em;
@@ -74,7 +71,7 @@ grid-template-areas: "top-left top-right"
     display: flex;
     justify-content: center;
     align-items: center;
-    background-color:whitesmoke;
+    background-color: #6AA84F;
 }
 
 #top-left {
@@ -92,11 +89,12 @@ main {
 
 #p1-btm-left {
     grid-area: btm-left;
-    background-color: #00DCDC;
-
+    background-color: #FF006E;
+    font-size: xx-large;
 }
 
 #p2-btm-right {
     grid-area: btm-right;
-    background-color: whitesmoke;
+    background-color: #6AA84F;
+    font-size: xx-large;
 }
