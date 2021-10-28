@@ -69,7 +69,7 @@ let isP1up = true
 let gameInterval
 let turnInterval
 let countDownInterval
-let timer = 30
+let timer = 29
 
 
 /////TESTING TESTING TESTING 123////
@@ -363,7 +363,12 @@ const freshScreen = () => {
     loadedArrow.angle = 180
     //move fired arrows off board
     for (let i = 0; i < firedArrows.length; i++) {
-        firedArrows[i].radius = 550
+        if (firedArrows[i].isBullseye === true) {
+            firedArrows[i].yBase = -100
+            firedArrows[i].yTip = -100
+        } else {
+            firedArrows[i].radius = 550
+        }
     }
     //re-set Targets
     targets[0].x = 40
@@ -395,17 +400,27 @@ const freshScreen = () => {
 
 const checkForWinner = (player) => {
     if (player.points >= 15) {
+        //give player winning status
         player.isWinner = true
+        console.log(player.name + "is the winner!")
+        //stop game loop and turn countdown
         clearInterval(gameInterval)
         clearInterval(turnInterval)
-        console.log(player.name + "is the winner!")
+        clearInterval(countDownInterval)
+        //display winning message
+        buttonSub.innerText = `${player.name} is the winner!`
+        p1pointsDisplay.innerText = "Refresh to play again!"
+        //reset the screen
         freshScreen()
         startButton.style.display = "none"
-        buttonSub.innerText = `${player.name} is the winner!`
         buttonSub.style.display = "block"
-        p1pointsDisplay.innerText = "Refresh to play again!"
+        clock.style.display = "none"
+        clock.innerText = ":29"
+        timer = 29
+        title.style.display = "block"
     }
 }
+
 const bullsEyeDetector = () => {
     //check every arrow
     for (let i = 0; i < firedArrows.length; i++) {
@@ -446,7 +461,7 @@ const countDown = () => {
         clock.innerText = `:${timer}`
         timer--
     } else if (timer === 0) {
-        timer = 30
+        timer = 29
         clearInterval(countDownInterval)
     }
 
@@ -533,7 +548,7 @@ startButton.addEventListener('click', (e) => {
     //begin tracking turns
     turnInterval = setInterval(switchTurns, 30000)
     //replace title with clock
-    timer = 30
+    timer = 29
     clock.innerText = `:${timer}`
     countDownInterval = setInterval(countDown, 1000)
     title.style.display = "none"
