@@ -10,6 +10,8 @@ const ctx = game.getContext('2d')
 const bowPic = new Image(27, 27);
 bowPic.src = "css/arhcers_bow.png"
 //Player Points Displays
+const p1Title = document.getElementById("p1")
+const p2Title = document.getElementById("p2")
 const p1pointsDisplay = document.getElementById("p1points")
 const p2pointsDisplay = document.getElementById("p2points")
 const p1Box = document.getElementById("p1-btm-left")
@@ -17,6 +19,7 @@ const p2Box = document.getElementById("p2-btm-right")
 //Start button area
 const startButton = document.getElementById("startButton")
 const buttonSub = document.getElementById("buttonSub")
+const buttonBox = document.getElementById("top-right")
 //Top Left, Clock
 let clock = document.getElementById("clock")
 let title = document.getElementById("title")
@@ -415,8 +418,15 @@ const checkForWinner = (player) => {
         clearInterval(turnInterval)
         clearInterval(countDownInterval)
         //display winning message
+        buttonBox.style.backgroundColor = "#FF006E"
+        buttonSub.style.fontSize = "xx-large"
         buttonSub.innerText = `${player.name} is the winner!`
+        //display 'play again'message
+        p1Title.style.display = "none"
+        p1Box.style.backgroundColor = "#6AA84F"
+        p2Box.style.backgroundColor = "#6AA84F"
         p1pointsDisplay.innerText = "Refresh to play again!"
+        p1pointsDisplay.style.fontSize = "xx-large"
         //reset the screen
         freshScreen()
         startButton.style.display = "none"

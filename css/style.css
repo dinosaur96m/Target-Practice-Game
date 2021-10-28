@@ -20,6 +20,7 @@ body {
 
 .player {
     font-size: smaller;
+    display: inline-block;
 }
 
 #title {
@@ -90,6 +91,7 @@ main {
 #p1-btm-left {
     grid-area: btm-left;
     background-color: #FF006E;
+    line-height: 50%;
     font-size: xx-large;
 }
 
