@@ -20,6 +20,15 @@ const buttonSub = document.getElementById("buttonSub")
 //Top Left, Clock
 let clock = document.getElementById("clock")
 let title = document.getElementById("title")
+//+1
+const plusOne = new Image(10, 10);
+plusOne.src = "css/plusOne.png"
+// plusOne.style.display = "none"
+document.querySelector('body').appendChild(plusOne)
+// const plusOne = document.getElementById("pluseOne")
+let displayedOnes = []
+
+
 
 
 ////////////////////////////////////////
@@ -421,12 +430,22 @@ const checkForWinner = (player) => {
     }
 }
 
+const animateBullseye = (target) => {
+    //store drawing parameters in an array to be re-drawn by game loop
+    let instance = [plusOne, (target.x + 20), (target.y - 5 ), 10, 10]
+    displayedOnes.push(instance)
+    //draw instance
+    ctx.drawImage(plusOne, displayedOnes[0][1], displayedOnes[0][2], displayedOnes[0][3], displayedOnes[0][4])
+    //set interval to make it disappear
+    setTimeout(displayedOnes.pop, 3000)
+}
+
 const bullsEyeDetector = () => {
     //check every arrow
     for (let i = 0; i < firedArrows.length; i++) {
         //filter out already-winning arrows
         if (firedArrows[i].isBullseye === true) {
-
+        
         } else {
             //in relation to every target
             for (let j = 0; j < targets.length; j++) {
@@ -441,6 +460,7 @@ const bullsEyeDetector = () => {
                     playerOne.points++
                     p1pointsDisplay.innerText = playerOne.points
                     console.log("playerOne has " + playerOne.points)
+                    animateBullseye(targets[j])
                     checkForWinner(playerOne)
                 //give points to 2 if it's their turn
                 } else if (playerOne.isUp === false) {
@@ -448,6 +468,7 @@ const bullsEyeDetector = () => {
                     playerTwo.points++
                     p2pointsDisplay.innerText = playerTwo.points
                     console.log("playerTwo has " + playerTwo.points)
+                    animateBullseye(targets[j])
                     checkForWinner(playerTwo)
                     }
                 }
@@ -514,6 +535,12 @@ const gameLoop = () => {
     {
         targets[i].render()
     }
+    //render plusOnes
+    if (displayedOnes.length >= 1) {
+        for (let i = 0; i < displayedOnes.length; i++) {
+            ctx.drawImage(plusOne, displayedOnes[i][1], displayedOnes[i][2], displayedOnes[i][3], displayedOnes[i][4])
+        }
+    }
     //render loaded arrow
     drawArrow(loadedArrow.xBase, loadedArrow.yBase, loadedArrow.xTip, loadedArrow.yTip)     
     //move and render fired arrows
@@ -572,5 +599,4 @@ startButton.addEventListener('click', (e) => {
 //unlisted and simple STRETCH Goals
 //////////////////////////////////
 //implement a 'Play again' button with the winning message
-//display a timer counting down each players turn
 //display message telling the player their turn is up
