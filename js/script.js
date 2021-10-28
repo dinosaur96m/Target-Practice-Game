@@ -61,7 +61,7 @@ console.log(firstArrowXy)
 let loadedArrow =  new Arrow(firstArrowXy[0],firstArrowXy[1], 180)
 let firedArrows = []
 //targets
-let targets = [new Target(40, -15), new Target(110, -30), new Target(210, -60), new Target(260, -90)]
+let targets = [new Target(40, -23), new Target(110, -38), new Target(210, -60), new Target(260, -90)]
 //players
 let playerOne = {
     name: "Player 1",
@@ -145,12 +145,11 @@ const drawLeftString = (angle) => {
 ///////////////////////////
 
 const drawShaft = (xBase, yBase, xTip, yTip) => {
-    ctx.lineWidth = 1
+    ctx.lineWidth = 2
     ctx.beginPath()
     ctx.moveTo(xBase, yBase)
     ctx.lineTo(xTip, yTip)
     ctx.strokeStyle = "black"
-    // "#652A0E"
     ctx.stroke()
     ctx.closePath()
 }
@@ -189,10 +188,10 @@ const drawYellow = (x,y) => {
 }
 
 const drawBlue = (x, y) => {
-    ctx.lineWidth = 1
+    ctx.lineWidth = 10
     ctx.beginPath()
     ctx.arc(x,y, 15, 0, Math.PI * 2, true)
-    ctx.strokeStyle = "black"
+    ctx.strokeStyle = "white"
     ctx.stroke()
     ctx.fillStyle = "blue"
     ctx.fill()
@@ -381,22 +380,21 @@ const freshScreen = () => {
     }
     //re-set Targets
     targets[0].x = 40
-    targets[0].y = -15
+    targets[0].y = -23
     targets[1].x = 110
-    targets[1].y = -30
+    targets[1].y = -38
     targets[2].x = 210
     targets[2].y = -60
     targets[3].x = 260
     targets[3].y = -90
-    //re-draw Bow
+    //re-center Bow
     theBow.centerAngle = 180
     theBow.rightAngle = 154
     theBow.leftAngle = 207
-    // ctx.drawImage(bowPic, (150 - (loadedArrow.radius / 2 + 20)), (game.height - 35), (loadedArrow.radius * 2.5), (loadedArrow.radius * 2.5))
-    //render loaded arrow
-    drawArrow(firstArrowXy[0], firstArrowXy[1], firstArrowXy[2], firstArrowXy[3])
     //render bow
     theBow.render()
+    //render loaded arrow
+    drawArrow(firstArrowXy[0], firstArrowXy[1], firstArrowXy[2], firstArrowXy[3])
     //render targets
     for (let i = 0; i < targets.length; i++)
     {
@@ -560,8 +558,8 @@ const gameLoop = () => {
 window.addEventListener('DOMContentLoaded', (e) => {
     console.log("Hello HTML")
     //create and render arrows
-    loadedArrow.render()
     theBow.render()
+    loadedArrow.render()
     console.log(theBow.curveRadius)
     //load other objs
 })
