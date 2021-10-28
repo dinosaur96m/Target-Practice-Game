@@ -23,7 +23,7 @@ let title = document.getElementById("title")
 //+1
 const plusOne = new Image(10, 10);
 plusOne.src = "css/plusOne.png"
-// plusOne.style.display = "none"
+plusOne.style.display = "none"
 document.querySelector('body').appendChild(plusOne)
 // const plusOne = document.getElementById("pluseOne")
 let displayedOnes = []
@@ -435,9 +435,14 @@ const animateBullseye = (target) => {
     let instance = [plusOne, (target.x + 20), (target.y - 5 ), 10, 10]
     displayedOnes.push(instance)
     //draw instance
-    ctx.drawImage(plusOne, displayedOnes[0][1], displayedOnes[0][2], displayedOnes[0][3], displayedOnes[0][4])
+    let index = displayedOnes.length - 1
+    console.log(`instance added, displayOnes[${index} = ${displayedOnes[index]}`)
+    ctx.drawImage(plusOne, displayedOnes[index][1], displayedOnes[index][2], displayedOnes[index][3], displayedOnes[index][4])
     //set interval to make it disappear
-    setTimeout(displayedOnes.pop, 3000)
+    let splicer = () => {
+        displayedOnes.splice((displayedOnes.length - 1), 1)
+    }
+    setTimeout(splicer, 1000)
 }
 
 const bullsEyeDetector = () => {
@@ -460,7 +465,7 @@ const bullsEyeDetector = () => {
                     playerOne.points++
                     p1pointsDisplay.innerText = playerOne.points
                     console.log("playerOne has " + playerOne.points)
-                    animateBullseye(targets[j])
+                    animateBullseye(targets[j], j)
                     checkForWinner(playerOne)
                 //give points to 2 if it's their turn
                 } else if (playerOne.isUp === false) {
@@ -468,7 +473,7 @@ const bullsEyeDetector = () => {
                     playerTwo.points++
                     p2pointsDisplay.innerText = playerTwo.points
                     console.log("playerTwo has " + playerTwo.points)
-                    animateBullseye(targets[j])
+                    animateBullseye(targets[j], j)
                     checkForWinner(playerTwo)
                     }
                 }
@@ -536,8 +541,9 @@ const gameLoop = () => {
         targets[i].render()
     }
     //render plusOnes
-    if (displayedOnes.length >= 1) {
+    if (displayedOnes.length >= 1){ 
         for (let i = 0; i < displayedOnes.length; i++) {
+            console.log("displyaed ones at " + i + " " + displayedOnes[i])
             ctx.drawImage(plusOne, displayedOnes[i][1], displayedOnes[i][2], displayedOnes[i][3], displayedOnes[i][4])
         }
     }
