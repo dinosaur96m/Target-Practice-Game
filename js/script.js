@@ -22,7 +22,7 @@ let clock = document.getElementById("clock")
 let title = document.getElementById("title")
 //+1
 const plusOne = new Image(10, 10);
-plusOne.src = "css/plusOne.png"
+plusOne.src = "css/yellowOne2.png"
 plusOne.style.display = "none"
 document.querySelector('body').appendChild(plusOne)
 // const plusOne = document.getElementById("pluseOne")
@@ -432,17 +432,16 @@ const checkForWinner = (player) => {
 
 const animateBullseye = (target) => {
     //store drawing parameters in an array to be re-drawn by game loop
-    let instance = [plusOne, (target.x + 20), (target.y - 5 ), 10, 10]
+    let instance = [(target.x + 20), (target.y - 5 ), 10, 10]
     displayedOnes.push(instance)
     //draw instance
     let index = displayedOnes.length - 1
-    console.log(`instance added, displayOnes[${index} = ${displayedOnes[index]}`)
-    ctx.drawImage(plusOne, displayedOnes[index][1], displayedOnes[index][2], displayedOnes[index][3], displayedOnes[index][4])
+    ctx.drawImage(plusOne, displayedOnes[index][0], displayedOnes[index][1], displayedOnes[index][2], displayedOnes[index][3])
     //set interval to make it disappear
     let splicer = () => {
         displayedOnes.splice((displayedOnes.length - 1), 1)
     }
-    setTimeout(splicer, 1000)
+    setTimeout(splicer, 500)
 }
 
 const bullsEyeDetector = () => {
@@ -544,7 +543,7 @@ const gameLoop = () => {
     if (displayedOnes.length >= 1){ 
         for (let i = 0; i < displayedOnes.length; i++) {
             console.log("displyaed ones at " + i + " " + displayedOnes[i])
-            ctx.drawImage(plusOne, displayedOnes[i][1], displayedOnes[i][2], displayedOnes[i][3], displayedOnes[i][4])
+            ctx.drawImage(plusOne, displayedOnes[i][0], displayedOnes[i][1], displayedOnes[i][2], displayedOnes[i][3])
         }
     }
     //render loaded arrow
