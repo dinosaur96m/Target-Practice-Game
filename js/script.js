@@ -17,6 +17,10 @@ const p2Box = document.getElementById("p2-btm-right")
 //Start button area
 const startButton = document.getElementById("startButton")
 const buttonSub = document.getElementById("buttonSub")
+//Top Left, Clock
+let clock = document.getElementById("clock")
+let title = document.getElementById("title")
+
 
 ////////////////////////////////////////
 ///////////Functions needed before/////////
@@ -63,6 +67,9 @@ let playerTwo = {
 }
 let isP1up = true
 let gameInterval
+let turnInterval
+let countDownInterval
+let timer = 30
 
 
 /////TESTING TESTING TESTING 123////
@@ -139,20 +146,19 @@ const drawShaft = (xBase, yBase, xTip, yTip) => {
     ctx.closePath()
 }
 
-const drawHead = (xTip,yTip) => {
-    ctx.lineWidth = 1
-    ctx.beginPath()
-    //draw a triangle
-    ctx.moveTo(xTip, yTip - 2)
-    ///////////^^^^^^^^^^^^^^//////////////////TRACK THE ABOVE COORDINATE for BULLSEYE
-    ctx.lineTo((xTip + 2), (yTip + 2))
-    ctx.lineTo((xTip - 2), (yTip + 2))
-    ctx.strokeStyle = "black"
-    ctx.stroke()
-    ctx.fillStyle = "black"
-    ctx.fill()
-    ctx.closePath()
-}
+// const drawHead = (xTip,yTip) => {
+//     ctx.lineWidth = 1
+//     ctx.beginPath()
+//     //draw a triangle
+//     ctx.moveTo(xTip, yTip - 2)
+//     ctx.lineTo((xTip + 2), (yTip + 2))
+//     ctx.lineTo((xTip - 2), (yTip + 2))
+//     ctx.strokeStyle = "black"
+//     ctx.stroke()
+//     ctx.fillStyle = "black"
+//     ctx.fill()
+//     ctx.closePath()
+// }
 
 //call prior funcitons to put arrow together
 const drawArrow = (xBase, yBase, xTip, yTip) => {
@@ -188,17 +194,11 @@ const drawBlue = (x, y) => {
 const drawTarget = (x, y) => {
     drawBlue(x, y)
     drawYellow(x, y)
-/////^^^^^^^////////////////////////////////////////////Track Yellow for Bullseye!!
 }
 
 ///////////////////////////////////////////
 //////////CLASSES//////////////////////////
 //////////////////////////////////////////
-
-// curve: ctx.arc((game.width / 2), (game.height - (radius * 2)), radius, 0, Math.PI, true)
-// arrow line to: ((game.width / 2), (game.height - (radius * 3.5)))
-// right string to: (((game.width / 2) + radius ), (game.height - (radius *2)))
-// left string to: ((game.width / 2) - radius), (game.height - (radius * 2)))
 
 // building the bow
 function Bow (curveRadius, centerAngle, rightAngle, leftAngle) {
@@ -441,24 +441,48 @@ const bullsEyeDetector = () => {
     }
 }
 
+const countDown = () => {
+    if (timer > 0) {
+        clock.innerText = `:${timer}`
+        timer--
+    } else if (timer === 0) {
+        timer = 30
+        clearInterval(countDownInterval)
+    }
+
+}
+
 const switchTurns = () => {
     if (playerOne.isUp === true) {
+        //stop game loop and turn countdown
         clearInterval(gameInterval)
         clearInterval(turnInterval)
+        //switch two player two's turn
         p1Box.style.backgroundColor = "whitesmoke"
         p2Box.style.backgroundColor = "#00DCDC"
         playerOne.isUp = false
         console.log("player 2 is up now!")
+        //swap clock for title
+        clock.style.display = "none"
+        title.style.display = "block"
+        //enable start button
         startButton.disabled = false
+        //reset canvas
         freshScreen()
     } else if (playerOne.isUp === false) {
+        //stop game loop and turn countdown
         clearInterval(gameInterval)
         clearInterval(turnInterval)
+        //switch to player one's turn
         p1Box.style.backgroundColor = "#00DCDC"
         p2Box.style.backgroundColor = "whitesmoke"
         playerOne.isUp = true
         console.log("player 1's Turn now!")
+        //swap clock for title
+        clock.style.display = "none"
+        title.style.display = "block"
         startButton.disabled = false
+        //reset canvas
         freshScreen()
     }
 }
@@ -502,9 +526,19 @@ document.addEventListener('keydown', leftRightHandler)
 // })
 startButton.addEventListener('click', (e) => {
     console.log("R2P clicked!")
+    //make sure the screen is clear 
     freshScreen()
+    //start the game loop
     gameInterval = setInterval(gameLoop, 70)
-    turnInterval = setInterval(switchTurns, 3000)
+    //begin tracking turns
+    turnInterval = setInterval(switchTurns, 30000)
+    //replace title with clock
+    timer = 30
+    clock.innerText = `:${timer}`
+    countDownInterval = setInterval(countDown, 1000)
+    title.style.display = "none"
+    clock.style.display = "block"
+    //replace start button
     startButton.disabled = true
     startButton.style.display = "none"
     buttonSub.style.display = "block"
@@ -522,7 +556,6 @@ startButton.addEventListener('click', (e) => {
 ////////////////////////////////////
 //unlisted and simple STRETCH Goals
 //////////////////////////////////
-//make winning arrows fall with their target for the rest of a turn
 //implement a 'Play again' button with the winning message
 //display a timer counting down each players turn
 //display message telling the player their turn is up

@@ -27,6 +27,12 @@ h1, h2 {
     color: blueviolet;
 }
 
+#title {
+    display: block;
+}
+#clock {
+    display: none;
+}
 #startButton {
     background-color: #00DCDC;
     color: blueviolet;
