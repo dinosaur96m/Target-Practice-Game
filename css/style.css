@@ -19,8 +19,15 @@ body {
 
 
 .player {
-    font-size: smaller;
+    font-size: xx-large;
+    margin: 40px auto 5px auto;
     display: inline-block;
+}
+#p1points {
+    margin: 15px auto 30px auto;
+}
+#p2points {
+    margin: 15px auto 30px auto;
 }
 
 #title {
@@ -32,12 +39,13 @@ body {
     font-size: xx-large;
 }
 #startButton {
+    border-radius: 20px;
     background-color: #9900FF;
     font-family: 'Irish Grover';
     color: white;
     font-weight: bold;
     font-size: xx-large;
-    padding: 5px;
+    padding: 10px;
 }
 
 #buttonSub {
@@ -45,6 +53,7 @@ body {
 }
 
 canvas {
+    border-radius: 12px;
     background-image: url('stadium.png');
   /* background-repeat: repeat; */
     background-position: center;
@@ -54,6 +63,7 @@ canvas {
 }
 
 #container {
+border-radius: 20px;
 max-width: 50em;
 /* height: 70vh; */
 background-color: #ddd1c7;
@@ -69,6 +79,7 @@ grid-template-areas: "top-left top-right"
 }
 
 #top-left, #top-right, #btm-left, #btm-right {
+    border-radius: 12px;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -90,13 +101,14 @@ main {
 
 #p1-btm-left {
     grid-area: btm-left;
+    border-radius: 12px;
     background-color: #FF006E;
-    line-height: 50%;
     font-size: xx-large;
 }
 
 #p2-btm-right {
     grid-area: btm-right;
+    border-radius: 12px;
     background-color: #6AA84F;
     font-size: xx-large;
 }

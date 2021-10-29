@@ -1,14 +1,11 @@
-
 ///////////////////////////////////////////
 //////////DOM Initializations/////////////////
 //////////////////////////////////////////
-//we need to get our canvas, save it to a varible, so we can access and utilize it 
+
+//access the canvas
 const game = document.getElementById('canvas')
 //get context
 const ctx = game.getContext('2d')
-//add bow image
-const bowPic = new Image(27, 27);
-bowPic.src = "css/arhcers_bow.png"
 //Player Points Displays
 const p1Title = document.getElementById("p1")
 const p2Title = document.getElementById("p2")
@@ -28,18 +25,14 @@ const plusOne = new Image(10, 10);
 plusOne.src = "css/yellowOne2.png"
 plusOne.style.display = "none"
 document.querySelector('body').appendChild(plusOne)
-// const plusOne = document.getElementById("pluseOne")
 let displayedOnes = []
-
-
-
 
 ////////////////////////////////////////
 ///////////Functions needed before/////////
 ///////////declaring universal variables/////
 /////////////////////////////////////////
 
-//get the math in a function that can reassaign or return the xTip and yTip for a given arrow
+//find x and y coordinates for an arrow's endpoints, given their angle
 const angleToX = (angle, radius) => {
     let x = ( radius * Math.sin(angle *  0.0174532925) ) + 150
     return x
@@ -53,6 +46,7 @@ const angleToY = (angle, radius) => {
 ///////////////////////////////////////////
 //////////Universal Variables/////////////////
 //////////////////////////////////////////
+
 //bow
 let theBow = new Bow(8, 180, 154, 207)
 let startAngle
@@ -63,6 +57,7 @@ const firstArrowXy= [(game.width / 2), (game.height - 1), (game.width / 2), (gam
 console.log(firstArrowXy)
 let loadedArrow =  new Arrow(firstArrowXy[0],firstArrowXy[1], 180)
 let firedArrows = []
+
 //targets
 let targets = [new Target(40, -23), new Target(110, -38), new Target(210, -60), new Target(260, -90)]
 //players
@@ -77,6 +72,7 @@ let playerTwo = {
     points: 0,
     isWinner: false
 }
+//game logic
 let isP1up = true
 let gameInterval
 let turnInterval
@@ -84,16 +80,14 @@ let countDownInterval
 let timer = 29
 
 
-/////TESTING TESTING TESTING 123////
-
-
 ///////////////////////////////////////////
 //////////Functions//////////////////////////
 //////////////////////////////////////////
 
-///////////////////////////////
-// /draw bow
-///////////////////////////////
+/////////////////////
+/////Draw Bow/////////
+/////////////////////
+
     const drawCurve = (curveRadius, centerAngle, rightAngle, leftAngle) => {
         //get coordinates for center of cricle
         let x = angleToX(centerAngle, 15)
@@ -157,28 +151,18 @@ const drawShaft = (xBase, yBase, xTip, yTip) => {
     ctx.closePath()
 }
 
-// const drawHead = (xTip,yTip) => {
-//     ctx.lineWidth = 1
-//     ctx.beginPath()
-//     //draw a triangle
-//     ctx.moveTo(xTip, yTip - 2)
-//     ctx.lineTo((xTip + 2), (yTip + 2))
-//     ctx.lineTo((xTip - 2), (yTip + 2))
-//     ctx.strokeStyle = "black"
-//     ctx.stroke()
-//     ctx.fillStyle = "black"
-//     ctx.fill()
-//     ctx.closePath()
-// }
-
 //call prior funcitons to put arrow together
+//drawHead() elimated, not refactoring in order to focus on 
+//game functionality and appearance
 const drawArrow = (xBase, yBase, xTip, yTip) => {
     drawShaft(xBase, yBase, xTip, yTip)
-    // drawHead(xTip,yTip)
 }
+
 //////////////////
 //Draw Targets
 ////////////
+
+//draw bulseye with red border
 const drawYellow = (x,y) => {
     ctx.lineWidth = 5
     ctx.beginPath()
@@ -190,6 +174,7 @@ const drawYellow = (x,y) => {
     ctx.closePath()
 }
 
+//draw blue cirlce with white border to complete target appearance
 const drawBlue = (x, y) => {
     ctx.lineWidth = 10
     ctx.beginPath()
@@ -251,13 +236,15 @@ function Arrow (xBase, yBase, angle) {
 ////////////////////////////////
 ///////Track Moving Objects
 ///////////////////////////////
-// shift every arrow on the board 5 pixels along its given path
+
+//move arrows along the correct path
 const arrowThruster = (arrow) => {
+    //winning arrows should fall with their targets until off-canvas
     if (arrow.isBullseye === true) {
         arrow.yBase++
         arrow.yTip++
         arrow.render()
-        //arrow not rendered but still moved so it doesnt earn another point 
+    //all other arrows on canvas should follow their angle five more pixels
     } else if (arrow.isBullseye === false) {
         arrow.radius += 5
         arrow.xTip = angleToX(arrow.angle, arrow.radius)
@@ -265,20 +252,21 @@ const arrowThruster = (arrow) => {
         arrow.xBase = angleToX(arrow.angle, (arrow.radius - 27))
         arrow.yBase = angleToY(arrow.angle, arrow.radius -27)
         arrow.render()
+    }
 }
 
-}
-
+//filter out off-canvas arrows and then move all the others 
 const arrowTrafficControl = () => {
     for (let i = 0; i < firedArrows.length; i++ ) {
         if (firedArrows[i].yBase < 0 || firedArrows[i].xBase < 0 || firedArrows[i].yTip > game.height) {
         
         } else {
-                arrowThruster(firedArrows[i])
+            arrowThruster(firedArrows[i])
         }
     }
-    }
+}
 
+//move target coordinates down the canvas
 const targetPusher = () => {
     for (let i = 0; i < targets.length; i++)
     if ((targets[i].y - 15) > game.height) {
@@ -291,6 +279,8 @@ const targetPusher = () => {
 /////////////////////////////////
 ////////Event handlers/////////
 ////////////////////////////////
+
+//fire an arrow when space bar is released
 const spaceBarHandler = (e) => {
     //only react to keyup when a turn is being played
     if (startButton.style.display === "none") {
@@ -305,10 +295,11 @@ const spaceBarHandler = (e) => {
             }
     //dont react to keyup if a turn is not being played
     } else if (startButton.style.display === "block") {
-
+    
     }
 }
 
+//move bow to the left or right using "q" and "e" keys
 const leftRightHandler = (e) => {
     if (startButton.style.display === "none") {
         switch (e.keyCode) {
@@ -323,6 +314,7 @@ const leftRightHandler = (e) => {
                 theBow.centerAngle +=5
                 theBow.rightAngle +=5
                 theBow.leftAngle += 5
+                //don't let loadedArrow move off the page
                 if (loadedArrow.angle >= 270) {
                     //arrow boundary
                     loadedArrow.angle = 270
@@ -345,6 +337,7 @@ const leftRightHandler = (e) => {
                 theBow.centerAngle -=5
                 theBow.rightAngle -=5
                 theBow.leftAngle -=5
+                //don't let loadedArrow move off the page
                 if (loadedArrow.angle <= 90 ) {
                     //arrow boundary
                     loadedArrow.angle = 90
@@ -357,14 +350,17 @@ const leftRightHandler = (e) => {
                 } 
                 break
         }
+    
     } else if (startButton.style.display === "block") {
-
+    
     }
 }
 
 ////////////////////////////
 /////////Game Loop////////////
 ///////////////////////////
+
+//reset the screen to window-load state
 const freshScreen = () => {
     //clear the canvas
     ctx.clearRect(0, 0, game.width, game.height)
@@ -372,6 +368,8 @@ const freshScreen = () => {
     loadedArrow.xBase = firstArrowXy[0]
     loadedArrow.yBase = firstArrowXy[1]
     loadedArrow.angle = 180
+    loadedArrow.xTip = firstArrowXy[2]
+    loadedArrow.yTip = firstArrowXy[3]
     //move fired arrows off board
     for (let i = 0; i < firedArrows.length; i++) {
         if (firedArrows[i].isBullseye === true) {
@@ -426,6 +424,7 @@ const checkForWinner = (player) => {
         p1Box.style.backgroundColor = "#6AA84F"
         p2Box.style.backgroundColor = "#6AA84F"
         p1pointsDisplay.innerText = "Refresh to play again!"
+        p1pointsDisplay.style.padding = "60px 10px 60px 10px"
         p1pointsDisplay.style.fontSize = "xx-large"
         //reset the screen
         freshScreen()
@@ -497,7 +496,6 @@ const countDown = () => {
         timer = 29
         clearInterval(countDownInterval)
     }
-
 }
 
 const switchTurns = () => {
@@ -574,11 +572,11 @@ window.addEventListener('DOMContentLoaded', (e) => {
     //load other objs
 })
 
+//listen for key events to move and fire bow
 document.addEventListener('keyup', spaceBarHandler)
 document.addEventListener('keydown', leftRightHandler)
-// bowPic.addEventListener('load', e => {
-//     ctx.drawImage(bowPic, (150 - (loadedArrow.radius / 2 + 13)), (game.height - 28), (loadedArrow.radius * 2), (loadedArrow.radius * 2))
-// })
+
+//begin the current player's turn
 startButton.addEventListener('click', (e) => {
     console.log("R2P clicked!")
     //make sure the screen is clear 
@@ -598,18 +596,3 @@ startButton.addEventListener('click', (e) => {
     startButton.style.display = "none"
     buttonSub.style.display = "block"
 })
-
-
-///////TO DO's
-
-
-
-/////////^^^^^^^^//////////////////
-/////MVP will be achieved when above steps are complete!////
-/////////////////////////////////////////
-
-////////////////////////////////////
-//unlisted and simple STRETCH Goals
-//////////////////////////////////
-//implement a 'Play again' button with the winning message
-//display message telling the player their turn is up
