@@ -4,7 +4,7 @@ Target practice is a simple yet satisfying archery game. The browser-based chall
 
  Once a player earns enough points to meet the threshold, they will be declared the winner and the game will end.
 
-TLDR: Using your mouse, aim your bow and arrow to hit moving targets and out-bullseye your opponent.
+Play the latest version of target practice [here!](https://dinosaur96m.github.io/Target-Practice-Game/)
 ## Tech Stack
 Target Pracitce will be built using HTML, CSS, and JavaScript. Some potential roadblocks I forsee when building this game will be rendering the arrows on the screen using Canvas. Making sure each follows a straight-line path once it is launched will present its own challange, let alone tracking the position of every moving arrow and every moving target to detect a bullseye.
 ## Wire Frames
