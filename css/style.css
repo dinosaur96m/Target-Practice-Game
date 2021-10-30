@@ -38,7 +38,8 @@ body {
     display: none;
     font-size: xx-large;
 }
-#startButton {
+
+button {
     border-radius: 20px;
     background-color: #9900FF;
     font-family: 'Irish Grover';
@@ -50,6 +51,15 @@ body {
 
 #buttonSub {
     display: none;
+}
+
+#startButton {
+    display: block;
+}
+
+#replayButton {
+    display: none;
+    margin: 60px auto 60px auto;
 }
 
 canvas {

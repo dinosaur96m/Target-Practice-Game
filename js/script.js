@@ -13,6 +13,8 @@ const p1pointsDisplay = document.getElementById("p1points")
 const p2pointsDisplay = document.getElementById("p2points")
 const p1Box = document.getElementById("p1-btm-left")
 const p2Box = document.getElementById("p2-btm-right")
+//Replay Button
+const replayButton = document.getElementById("replayButton")
 //Start button area
 const startButton = document.getElementById("startButton")
 const buttonSub = document.getElementById("buttonSub")
@@ -419,13 +421,12 @@ const checkForWinner = (player) => {
         buttonBox.style.backgroundColor = "#FF006E"
         buttonSub.style.fontSize = "xx-large"
         buttonSub.innerText = `${player.name} is the winner!`
-        //display 'play again'message
+        //display 'play again' button
         p1Title.style.display = "none"
+        p1pointsDisplay.style.display = "none"
         p1Box.style.backgroundColor = "#6AA84F"
         p2Box.style.backgroundColor = "#6AA84F"
-        p1pointsDisplay.innerText = "Refresh to play again!"
-        p1pointsDisplay.style.padding = "60px 10px 60px 10px"
-        p1pointsDisplay.style.fontSize = "xx-large"
+        replayButton.style.display = "block"
         //reset the screen
         freshScreen()
         startButton.style.display = "none"
