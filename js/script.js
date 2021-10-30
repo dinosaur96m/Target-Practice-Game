@@ -574,11 +574,11 @@ window.addEventListener('DOMContentLoaded', (e) => {
 })
 
 //listen for key events to move and fire bow
-document.addEventListener('keyup', spaceBarHandler)
-document.addEventListener('keydown', leftRightHandler)
+document.addEventListener("keyup", spaceBarHandler)
+document.addEventListener("keydown", leftRightHandler)
 
 //begin the current player's turn
-startButton.addEventListener('click', (e) => {
+startButton.addEventListener("click", (e) => {
     console.log("R2P clicked!")
     //make sure the screen is clear 
     freshScreen()
@@ -597,3 +597,27 @@ startButton.addEventListener('click', (e) => {
     startButton.style.display = "none"
     buttonSub.style.display = "block"
 })
+
+replayButton.addEventListener("click", (e) => {
+    //clear all fired arrows from array
+    firedArrows.splice(0, firedArrows.length)
+    //reset players
+    playerOne.points = 0
+    playerTwo.points = 0
+    p1pointsDisplay.innerText = "0"
+    p2pointsDisplay.innerText = "0"
+    playerTwo.isWinner = false
+    playerOne.isWinner = false
+    playerOne.isUp = false
+    //fresh screen
+    switchTurns()
+    freshScreen
+    //p1 Box
+    replayButton.style.display = "none"
+    p1Title.style.display = "block"
+    p1pointsDisplay.style.display = "block"
+    //button box
+     //startButton Box
+    buttonBox.style.backgroundColor = "#6AA84F"
+    buttonSub.innerText = "First to 15 points wins!"
+} )
