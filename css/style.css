@@ -88,6 +88,17 @@ grid-template-areas: "top-left top-right"
                       "btm-left btm-right";
 }
 
+#instructions {
+    border-radius: 20px;
+    max-width: 50em;
+    /* height: 70vh; */
+    background-color: #ddd1c7;
+    margin: 1% auto;
+    padding: 1em;
+    color: #9900FF;
+    font-family: 'Courier New', Courier, monospace;
+}
+
 #top-left, #top-right, #btm-left, #btm-right {
     border-radius: 12px;
     display: flex;
